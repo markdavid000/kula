@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright
+/playwright-report/
+/test-results/
+/blob-report/
+/playwright/.cache/
+
+# turbopack
+/.turbo/
+!.env.example
+
+# figma sync output (regenerate with pnpm figma:sync)
+/design/

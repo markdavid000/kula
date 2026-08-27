@@ -1,0 +1,12 @@
+.next
+out
+build
+coverage
+node_modules
+pnpm-lock.yaml
+playwright-report
+test-results
+# Tool-managed; rewritten by Claude Code, so formatting it just churns.
+.claude
+# Figma sync output — machine-generated, and document.json is multi-MB.
+design

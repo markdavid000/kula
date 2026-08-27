@@ -1,0 +1,22 @@
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  plugins: [react()],
+  // Resolves the "@/*" alias from tsconfig.json natively — no plugin needed.
+  resolve: { tsconfigPaths: true },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./vitest.setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
+    // Playwright owns e2e; Vitest must not try to run those specs.
+    exclude: ["node_modules/**", ".next/**", "e2e/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.{ts,tsx}", "src/**/*.d.ts"],
+    },
+  },
+});

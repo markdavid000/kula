@@ -1,26 +1,508 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Kula design tokens — transcribed from the Kula Figma file
+ * (FfC9ofVeF8u6tnMm1M57lz), nodes 264:2259, 510:20048, 441:6478, 533:6982,
+ * 564:2316, 564:2465. Regenerate the source data with `pnpm figma:sync`.
+ *
+ * Two kinds of value live here, and the distinction matters when the design
+ * changes:
+ *
+ *   BOUND   — backed by a named Figma variable. Renaming or re-valuing one of
+ *             these in Figma is a deliberate design-system change.
+ *   RAW     — a literal fill in the design with no variable behind it. The
+ *             design leans on these heavily (the cream canvas among them), so
+ *             they are promoted to tokens here rather than inlined at call
+ *             sites, but they are not yet part of the Figma variable set.
+ *
+ * Every entry carries its Figma name (BOUND) or its usage (RAW). Nothing in
+ * this file is approximated.
+ */
+@theme {
+  /* --- Brand · BOUND ---------------------------------------------------- */
+  /* `Primary Green` — body copy, card outlines, header, footer. */
+  --color-ink: #071f10;
+  /* `Less black` */
+  --color-ink-soft: #262826;
+  /* `Primary Green Color` — primary CTA fill. */
+  --color-forest: #036729;
+  /* `Accent Yellow` — the wordmark and highlight accents. */
+  --color-accent: #ffe236;
+  /* `Orange` — links and secondary CTAs. */
+  --color-brand: #ea5220;
+  /* `subtext` */
+  --color-subtext: #6b6c6c;
+  /* `Grey Color` — Vendors, Riders. */
+  --color-grey: #656565;
+  /* `Primary Color` — Terms, Privacy, Refund body copy. */
+  --color-navy: #010721;
+  /* `Primary white` / `white` and `black`. Named so components can reference a
+   * variable rather than a bare keyword, matching the rest of the palette. */
+  --color-paper: #ffffff;
+  --color-void: #000000;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* --- Surfaces · RAW --------------------------------------------------- */
+  /* The page canvas. Most-used fill in the file; has no Figma variable. */
+  --color-cream: #f8f0dd;
+  /* Alternating sections (FAQ, footer). */
+  --color-cream-light: #fef9ee;
+  --color-cream-soft: #fcf4e3;
+  --color-cream-warm: #fffaec;
+  /* Footer plate, beneath the wave dividers. */
+  --color-forest-deep: #042d1c;
+  /* Deep green used on the Home "3 easy steps" panel. */
+  --color-ink-deep: #0f2b19;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* --- Card surfaces · RAW ---------------------------------------------- */
+  --color-peach: #ffcda9;
+  --color-peach-soft: #ffdfc1;
+  /* Pale lemon: the "3 easy steps" panel and its cards. */
+  --color-lemon: #feffa9;
+  --color-mint: #a9ffd4;
+  --color-aqua: #a9fff1;
+  --color-blush: #faeeea;
+  /* Inner ring on the "Find Location" badge (264:2936). */
+  --color-sand: #ecd9c3;
+  --color-orchid: #ffa4f3;
+
+  /* --- Riders card + FAQ surfaces · RAW ----------------------------------
+   * The three 360 x 303 cards on Riders (441:6520, 441:6548, 441:6577) and the
+   * two highlighted FAQ rows (510:25758, 510:25745). */
+  --color-sky: #a9e8ff;
+  --color-apricot: #ffdaa9;
+  --color-bubblegum: #ffc3fa;
+  --color-lemon-bright: #ffeb76;
+  --color-mint-bright: #a3ffc9;
+
+  /* --- Vendors + Riders literals · RAW -----------------------------------
+   * Deliberately NOT snapped to their nearest neighbours — each is a distinct
+   * value in the file. --color-ice is not --color-sky (#a9e8ff),
+   * --color-lime-pale is not --color-lemon (#feffa9), --color-brand-shadow is
+   * not --color-brand (#ea5220) and --color-forest-shadow is not
+   * --color-forest-darkest (#002611). */
+  --color-ice: #a3f3ff;
+  --color-lime-pale: #eaffa4;
+  --color-tangerine-soft: #ffc780;
+  /* The hard drop shadow under the Vendors/Riders display headings. NOTE:
+   * 441:6518 and 441:6793 use --color-brand for the same shadow, so this may be
+   * a stray in the Figma file — flagged for the designer, transcribed as drawn. */
+  --color-brand-shadow: #ed5e3b;
+  /* The hard offset shadow on the Riders "stay in control" cards. */
+  --color-forest-shadow: #062612;
+
+  /* --- Washes · RAW ------------------------------------------------------
+   * Applied in the design at partial opacity (`bg-wash-green/66`,
+   * `bg-wash-lime/59`). The base colours are opaque; the alpha belongs at the
+   * call site so the ratio stays visible in the markup. */
+  --color-wash-green: #f2ffed;
+  --color-wash-lime: #f8ffe0;
+
+  /* --- Step-card surfaces · RAW ------------------------------------------
+   * The three "3 easy steps" illustration panels (224:2982, 224:2988,
+   * 224:2994). Brighter than the rest of the palette because they sit behind
+   * full-colour artwork. */
+  --color-step-orange: #f6831f;
+  --color-step-amber: #fcbb02;
+  --color-step-green: #149444;
+
+  /* --- Neutrals · RAW --------------------------------------------------- */
+  --color-grey-mid: #4d4d4d;
+  /* The 1px rule around each collapsed FAQ row (574:2886 and its counterparts
+   * on Vendors, Terms, Privacy and Refunds). */
+  --color-rule: #e5e5e5;
+  /* Riders: the dark plate at 510:25767 and the stroke on 516:1197. */
+  --color-charcoal: #171c1f;
+  --color-forest-darkest: #002611;
+  /* Body copy inside the step cards (224:2986). */
+  --color-stone: #6b6b5e;
+  --color-grey-light: #f2f2f2;
+  --color-near-black: #131313;
+  --color-slate: #94a3b8;
+  --color-green-mid: #1c8042;
+  --color-maroon: #392222;
+
+  /*
+   * NOT FROM FIGMA. Referenced only by the components carried over from the
+   * earlier export (marketing.tsx, how-it-works.tsx, ui/section.tsx, …), which
+   * are being superseded page by page. Delete these once the last consumer is
+   * gone; do not use them in new work.
+   */
+  --color-muted: #5c5346;
+  --color-hairline: #e0e2e6;
+  --color-brand-strong: #f84416;
+  --color-brand-warm: #ec8639;
+
+  /* --- Typography ------------------------------------------------------- */
+  /*
+   * The design specifies Gelica (`FONTSPRING DEMO - Gelica`, cuts Bk/SBd/Rg/Md)
+   * for all display type. Gelica is a commercial Fontspring face and the file
+   * carries only the demo, so Bitter stands in — an approved substitution, not
+   * a match. Every heading therefore carries a typeface deviation. Swap
+   * --font-display once the licence is in place; nothing else needs to change.
+   */
+  --font-display: var(--font-bitter), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* The design's label face, used for small standalone labels. */
+  --font-label: var(--font-roboto-flex), ui-sans-serif, system-ui, sans-serif;
+  /* Set only on the stats ticker (264:2843). */
+  --font-ticker: var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Every FAQ question, on Home, Vendors and Riders alike. Not a substitution —
+   * Young Serif is the face the design names. */
+  --font-question: var(--font-young-serif), ui-serif, Georgia, serif;
+
+  /* --- Shape -------------------------------------------------------------
+   * The design has no radius variables — every corner is a literal. The three
+   * below are the recurring ones; every other radius (12, 20, 24, 32, 40, 48,
+   * 50, 56, 68, 72, 100–232) is written exactly at its call site, because a
+   * token per value would be a naming exercise, not a system. */
+  --radius-card: 28px;
+  --radius-media: 16px;
+  --radius-pill: 9999px;
+
+  /* --- Layout ------------------------------------------------------------
+   * The design is drawn on a 1440px canvas whose `nav bar` and content frames
+   * sit inside a 100px gutter — 1240px of content. `Container` reproduces this
+   * exactly at ≥1440px and narrows the gutter below it. */
+  --width-canvas: 1440px;
+  /*
+   * The page gutter. Fluid, and anchored so that at the 1440 canvas it is
+   * EXACTLY the design's 100px: 6.9444vw * 1440 = 100. Below that it tapers to
+   * a 20px thumb margin on the smallest phones; above it, the clamp holds at
+   * 100 so a wide display keeps the design's measure instead of drifting.
+   *
+   * Every fluid value in this file is built the same way — the design number is
+   * the clamp's MAX and the vw coefficient is `design / 1440 * 100`, so the
+   * 1440 composition is reproduced exactly by construction rather than by
+   * hand-tuning a breakpoint.
+   */
+  --spacing-gutter: clamp(20px, 6.9444vw, 100px);
+
+  /*
+   * The canvas width as a breakpoint: `canvas:` means "the composition exactly
+   * as drawn". Everything below it is the responsive layer, built mobile-first
+   * so the base styles are the phone and each step up adds width back.
+   *
+   * In rem, not px, and that matters: Tailwind orders breakpoint
+   * variants by comparing their values, and it cannot compare px against the
+   * default rem-based scale — a px breakpoint is emitted *before* `sm`, so
+   * `lg:` would silently win over `canvas:`. 90rem is 1440px at the default
+   * root size and sorts where it belongs, between `xl` and `2xl`.
+   */
+  --breakpoint-canvas: 90rem;
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /*
+   * The stats ticker. The track holds the item set twice, so translating it by
+   * half its width lands the copy exactly where the original started — the loop
+   * has no seam. Only ever applied under `motion-safe`.
+   */
+  --animate-ticker: ticker 25s linear infinite;
+
+  /*
+   * The Riders bridge. The rider crosses the full viewport and repeats; linear,
+   * because a bike at constant speed should not ease. Only ever applied under
+   * `motion-safe`.
+   *
+   * RIGHT TO LEFT, which is the direction the artwork faces — the rider's helmet
+   * leads on the left and the delivery box trails behind on the right, so
+   * travelling the other way rides the bike backwards. Timed from the reference
+   * recording: the rider crosses the viewport in about 12s.
+   *
+   * The rider RIDES THE BRIDGE rather than crossing on a flat line. The vertical
+   * track is sampled from the bridge artwork's own top edge — the same SVG the
+   * section draws, at its true 1645-wide scale — under the rider's own centre.
+   *
+   * Both numbers here are fitted to the Figma prototype rather than guessed. A
+   * least-squares fit of 65 tracked frames against the bridge profile gives a
+   * phase offset of 4px — the rider samples the bridge essentially beneath
+   * itself. The amplitude is 0.70, set so the swing matches the 71px measured
+   * off the prototype: the rider takes about seven tenths of the bridge's own
+   * vertical movement rather than all of it.
+   *
+   * The curve is anchored so that at the design's own static x (1295.09) the
+   * rider sits exactly where the design draws it; the ride passes through the
+   * transcribed pose rather than orbiting near it.
+   *
+   * The rider also leans with the gradient: nose-down into a dip, nose-up out
+   * of it. The angle is the slope of the path the rider actually travels,
+   * sampled from the same smoothed bridge profile and differentiated over a
+   * 45px window so pixel noise in the traced edge does not make it twitch. It
+   * is calibrated against the design rather than invented: at the design's own
+   * static x (1295.09) the gradient is 95% of the steepest on the bridge, so
+   * reproducing its -24.893deg there sets the scale, and the lean then runs
+   * about -26deg descending to +25deg climbing.
+   *
+   * TRAVEL AND LEAN ARE ONE ANIMATION, and must stay that way. They were once
+   * two — the ride on the wrapper, the lean on the image — which looks right on
+   * a fresh load and then rots: nothing keeps two animations on two elements
+   * phase-locked, and once either restarts on its own the lean is permanently
+   * offset from the bob. Measured on a page that had been open a while, the
+   * lean lagged by 123deg where it should lead by 90, which reads as the bike
+   * tilting DOWN as it climbs. One keyframe track cannot drift from itself.
+   *
+   * The order inside `transform` is what makes a single element work. A list is
+   * applied right to left about the transform origin, so `translate() rotate()`
+   * spins the rider about its own centre and then moves it along the bridge.
+   * The separate `rotate` PROPERTY cannot do this: CSS resolves it before
+   * `transform`, which sends the travel down a -24.9deg diagonal instead.
+   *
+   * X and Y ride together here too: the horizontal travel is linear in time, so
+   * a time-keyframed Y is also position-keyed, and it stays in step at any
+   * viewport width. Y is a share of `--bridge-h` so the bob shrinks with the
+   * bridge on a narrow screen.
+   */
+  --animate-rider-ride: rider-ride 12s linear infinite;
+
+  /*
+   * The eyes above "Get your order in 3 easy steps". Measured off the reference
+   * recording: the artwork alternates between two states that are exact
+   * horizontal mirrors of each other, snapping instantly — no tween — and
+   * dwelling 1.5s in each, so a 3s cycle.
+   *
+   * The keyframes hold each state right up to the switch, which is what
+   * produces the snap; `steps()` is not needed and would fight the 50% split.
+   */
+  --animate-eyes-dart: eyes-dart 3s infinite;
+
+  @keyframes eyes-dart {
+    0%,
+    49.999% {
+      transform: scaleX(1);
+    }
+    50%,
+    100% {
+      transform: scaleX(-1);
+    }
+  }
+
+  @keyframes rider-ride {
+    0% {
+      transform: translate(100vw, calc(var(--bridge-h) * -0.21096)) rotate(7.858deg);
+    }
+
+    3.3333% {
+      transform: translate(calc(96.6667vw - 3.3333%), calc(var(--bridge-h) * -0.22055))
+        rotate(-1.319deg);
+    }
+
+    6.6667% {
+      transform: translate(calc(93.3333vw - 6.6667%), calc(var(--bridge-h) * -0.20137))
+        rotate(-10.496deg);
+    }
+
+    10% {
+      transform: translate(calc(90vw - 10%), calc(var(--bridge-h) * -0.15023)) rotate(-20.038deg);
+    }
+
+    13.3333% {
+      transform: translate(calc(86.6667vw - 13.3333%), calc(var(--bridge-h) * -0.06712))
+        rotate(-25.707deg);
+    }
+
+    16.6667% {
+      transform: translate(calc(83.3333vw - 16.6667%), calc(var(--bridge-h) * 0.02557))
+        rotate(-22.844deg);
+    }
+
+    20% {
+      transform: translate(calc(80vw - 20%), calc(var(--bridge-h) * 0.0895)) rotate(-11.001deg);
+    }
+
+    23.3333% {
+      transform: translate(calc(76.6667vw - 23.3333%), calc(var(--bridge-h) * 0.09909))
+        rotate(1.993deg);
+    }
+
+    26.6667% {
+      transform: translate(calc(73.3333vw - 26.6667%), calc(var(--bridge-h) * 0.07352))
+        rotate(15.127deg);
+    }
+
+    30% {
+      transform: translate(calc(70vw - 30%), 0px) rotate(24.753deg);
+    }
+
+    33.3333% {
+      transform: translate(calc(66.6667vw - 33.3333%), calc(var(--bridge-h) * -0.09589))
+        rotate(24.837deg);
+    }
+
+    36.6667% {
+      transform: translate(calc(63.3333vw - 36.6667%), calc(var(--bridge-h) * -0.16941))
+        rotate(16.951deg);
+    }
+
+    40% {
+      transform: translate(calc(60vw - 40%), calc(var(--bridge-h) * -0.21096)) rotate(7.297deg);
+    }
+
+    43.3333% {
+      transform: translate(calc(56.6667vw - 43.3333%), calc(var(--bridge-h) * -0.22055))
+        rotate(-1.095deg);
+    }
+
+    46.6667% {
+      transform: translate(calc(53.3333vw - 46.6667%), calc(var(--bridge-h) * -0.20137))
+        rotate(-10.356deg);
+    }
+
+    50% {
+      transform: translate(calc(50vw - 50%), calc(var(--bridge-h) * -0.15023)) rotate(-19.449deg);
+    }
+
+    53.3333% {
+      transform: translate(calc(46.6667vw - 53.3333%), calc(var(--bridge-h) * -0.06712))
+        rotate(-25.875deg);
+    }
+
+    56.6667% {
+      transform: translate(calc(43.3333vw - 56.6667%), calc(var(--bridge-h) * 0.02557))
+        rotate(-23.041deg);
+    }
+
+    60% {
+      transform: translate(calc(40vw - 60%), calc(var(--bridge-h) * 0.0863)) rotate(-11.142deg);
+    }
+
+    63.3333% {
+      transform: translate(calc(36.6667vw - 63.3333%), calc(var(--bridge-h) * 0.10228))
+        rotate(1.6deg);
+    }
+
+    66.6667% {
+      transform: translate(calc(33.3333vw - 66.6667%), calc(var(--bridge-h) * 0.07352))
+        rotate(15.323deg);
+    }
+
+    70% {
+      transform: translate(calc(30vw - 70%), calc(var(--bridge-h) * -0.0032)) rotate(24.837deg);
+    }
+
+    73.3333% {
+      transform: translate(calc(26.6667vw - 73.3333%), calc(var(--bridge-h) * -0.09269))
+        rotate(24.697deg);
+    }
+
+    76.6667% {
+      transform: translate(calc(23.3333vw - 76.6667%), calc(var(--bridge-h) * -0.16941))
+        rotate(17.4deg);
+    }
+
+    80% {
+      transform: translate(calc(20vw - 80%), calc(var(--bridge-h) * -0.21416)) rotate(7.942deg);
+    }
+
+    83.3333% {
+      transform: translate(calc(16.6667vw - 83.3333%), calc(var(--bridge-h) * -0.22374))
+        rotate(-1.319deg);
+    }
+
+    86.6667% {
+      transform: translate(calc(13.3333vw - 86.6667%), calc(var(--bridge-h) * -0.20457))
+        rotate(-10.833deg);
+    }
+
+    90% {
+      transform: translate(calc(10vw - 90%), calc(var(--bridge-h) * -0.15023)) rotate(-16.558deg);
+    }
+
+    93.3333% {
+      transform: translate(calc(6.6667vw - 93.3333%), calc(var(--bridge-h) * -0.09589))
+        rotate(-7.016deg);
+    }
+
+    96.6667% {
+      transform: translate(calc(3.3333vw - 96.6667%), calc(var(--bridge-h) * -0.09589))
+        rotate(-0.028deg);
+    }
+
+    100% {
+      transform: translate(-100%, calc(var(--bridge-h) * -0.09589)) rotate(0deg);
+    }
+  }
+
+  @keyframes ticker {
+    to {
+      transform: translateX(-50%);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Keeps anchored sections clear of the sticky header. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  /*
+   * Display type carries the brand voice. Family only — weight, size, tracking
+   * and line-height come from the design, per heading.
+   *
+   * Deliberately NO `text-wrap: balance` here, and no `pretty` on `p`. Every
+   * line break in this design is determined by the frame width the designer
+   * set, so a browser re-balancing the lines silently breaks the transcription:
+   * it was moving the hero headline's break a word earlier than Figma does
+   * (264:2617), even though the design's first line fits the measure.
+   */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  /*
+   * Tailwind v4 resets `button` to `cursor: default` to match the native
+   * control. Every button in this design is a call to action, so the pointer is
+   * restored here rather than remembered at each call site. Disabled controls
+   * keep the default arrow, and `summary` is included because it is a button in
+   * everything but name.
+   */
+  button:not(:disabled),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  label[for],
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /*
+   * A single visible focus treatment for every interactive element. Using
+   * :focus-visible (not :focus) keeps it off mouse clicks but guarantees
+   * keyboard users always see it — WCAG 2.4.7.
+   */
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respect users who ask the OS to reduce motion — WCAG 2.3.3. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

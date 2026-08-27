@@ -1,0 +1,17 @@
+<svg width="509" height="160" viewBox="0 0 509 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="509" height="160" fill="#1E1E1E"/>
+<g id="Riders">
+<g id="Frame 2147239764">
+<rect x="-732.5" y="-334.5" width="1279" height="1123" rx="67.5" fill="#FFE236"/>
+<rect x="-732.5" y="-334.5" width="1279" height="1123" rx="67.5" stroke="#071F10"/>
+<g id="Frame 2147239780" opacity="0.2" clip-path="url(#clip0_264_2258)">
+<path id="Line 40" d="M-13 142C-13 142 146.29 33.6267 248 34.001C352.258 34.3846 509 132.5 509 132.5" stroke="#EA5220" stroke-width="36"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_264_2258">
+<rect width="509" height="160" fill="white" transform="matrix(1 0 0 -1 0 160)"/>
+</clipPath>
+</defs>
+</svg>
