@@ -98,11 +98,16 @@ export interface LegalDocument {
  * clearance against its own ink top ((L - 0.752·F) / 2, the ratio measured off
  * 564:2309). `left` likewise tightens as the page gutter narrows, so the pill
  * never leaves the viewport.
+ *
+ * Below the canvas the title is 30px on a 36px line, so its ink starts 6.7px
+ * down and the pill's foot must sit at -1 against that: top = 6.7 - 1 - 46.33
+ * = -40.6. `left` pulls in to -4, because a phone title fills the measure and
+ * the canvas -33.41 put the pill 8px from the screen edge, over the words.
  */
 function EyebrowPill({ children }: { children: ReactNode }) {
   return (
     <span
-      className="bg-accent text-ink inset-ring-ink absolute top-[-33.63px] left-[-33.41px] inline-flex items-center rounded-[32px] px-[32px] py-[8px] text-[14px] leading-[21px] font-normal tracking-[-0.07px] whitespace-nowrap capitalize shadow-[0_2px_0_0_var(--color-accent)] inset-ring-1"
+      className="bg-accent text-ink inset-ring-ink canvas:top-[-33.63px] canvas:left-[-33.41px] absolute top-[-40.6px] left-[-4px] inline-flex items-center rounded-[32px] px-[32px] py-[8px] text-[14px] leading-[21px] font-normal tracking-[-0.07px] whitespace-nowrap capitalize shadow-[0_2px_0_0_var(--color-accent)] inset-ring-1"
       style={{ transform: "rotate(-11.2145deg)" }}
     >
       {children}
@@ -156,7 +161,7 @@ export function LegalPage({
               split is the design's; the smaller steps below `canvas` are
               derived, and clear the fixed header.
             */}
-            <div className="mx-auto flex w-full max-w-[915px] flex-col items-center gap-4 pt-[265px] pb-[184px]">
+            <div className="mx-auto flex w-full max-w-[915px] flex-col items-center gap-4 pt-[clamp(140px,18.4028vw,265px)] pb-[clamp(88px,12.7778vw,184px)]">
               {/*
                 `w-fit` so the pill can hang off the title's own left edge. It
                 costs nothing: the text node is centred inside its 915 frame, so
@@ -228,7 +233,9 @@ export function LegalPage({
           Vertical gaps below `lg` are derived.
         */}
         <div className="bg-cream pt-[118px] pb-[160px]">
-          <Container className="px-[80px]">
+          {/* 80 at the canvas, tapering to the site's 20px thumb margin like
+              --spacing-gutter; a fixed 80 left a 230px column on a phone. */}
+          <Container className="px-[clamp(20px,5.5556vw,80px)]">
             {/* VERTICAL auto-layout, itemSpacing 64. */}
             <div className="flex flex-col gap-[64px]">
               {doc.sections.map((section) => (

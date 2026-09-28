@@ -98,7 +98,7 @@ export function ContactDetails({ children }: { children?: ReactNode }) {
   const { contact } = siteConfig;
 
   return (
-    <div className="grid grid-cols-2 gap-10">
+    <div className="grid gap-10 md:grid-cols-2">
       <div>
         <p className="text-ink/75 max-w-prose text-lg leading-relaxed">
           Whether you have questions about our service, need support, or want to partner with us,
@@ -114,7 +114,10 @@ export function ContactDetails({ children }: { children?: ReactNode }) {
           </div>
           <div>
             <p className="text-muted text-sm font-semibold tracking-wide uppercase">Call us</p>
-            <a href={`tel:${contact.phoneHref}`} className="hover:text-brand mt-1 block text-lg">
+            <a
+              href={`tel:${contact.phoneHref}`}
+              className="hover:text-brand mt-1 block py-2 text-lg"
+            >
               {contact.phone}
             </a>
           </div>
@@ -122,7 +125,10 @@ export function ContactDetails({ children }: { children?: ReactNode }) {
             <p className="text-muted text-sm font-semibold tracking-wide uppercase">
               Send us a mail
             </p>
-            <a href={`mailto:${contact.email}`} className="hover:text-brand mt-1 block text-lg">
+            <a
+              href={`mailto:${contact.email}`}
+              className="hover:text-brand mt-1 block py-2 text-lg"
+            >
               {contact.email}
             </a>
           </div>

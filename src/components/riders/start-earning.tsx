@@ -87,7 +87,9 @@ export function StartEarning() {
           }))}
           // 510:25745 is the step the design draws open.
           defaultOpen={0}
-          itemClassName="relative flex flex-col rounded-[12px] p-5 transition-[filter] duration-300 ease-out sm:p-8 motion-reduce:transition-none"
+          // pb-7 on a phone: the next row overlaps this one by 8px, which left p-5's
+          // 20px as 12 between the answer and the row below.
+          itemClassName="relative flex flex-col rounded-[12px] p-5 pb-7 transition-[filter] duration-300 ease-out sm:p-8 motion-reduce:transition-none"
           itemClosedClassName="hover:brightness-[0.97]"
           // 510:25747 etc. — Gelica SemiBold 28/33.18, Less black.
           questionClassName="text-ink-soft min-w-0 flex-1 text-left text-[clamp(19px,1.9444vw,28px)] leading-[1.185] font-semibold"

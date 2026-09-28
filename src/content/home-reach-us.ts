@@ -49,20 +49,24 @@ export const reachUsChannels: readonly ReachUsChannel[] = [
     detail: "thekulaapp.info@gmail.com",
     href: "mailto:thekulaapp.info@gmail.com",
     // 574:2857 `si:mail-duotone` — a 28.17 x 22.83 glyph in a 32 x 32 box.
-    icon: { src: "/icons/contact-mail.svg", insetX: 5.99, insetY: 14.32 },
+    //
+    // Insets are 0 on all three: each file is the whole 32 x 32 frame with the
+    // glyph already placed inside it. Insetting it again padded it twice — and
+    // the mail's unequal 5.99 / 14.32 squashed the envelope to 28 x 23.
+    icon: { src: "/icons/contact-mail.svg", insetX: 0, insetY: 0 },
   },
   {
     title: "Call us",
     detail: "+234 (0)8169134590",
     href: "tel:+2348169134590",
     // 574:2866 `si:phone-add-call-duotone` — 26.00 x 26.01 in a 32 x 32 box.
-    icon: { src: "/icons/contact-phone.svg", insetX: 9.38, insetY: 9.36 },
+    icon: { src: "/icons/contact-phone.svg", insetX: 0, insetY: 0 },
   },
   {
     title: "Visit us",
     detail: "11 victor malu road new GRA makurdi",
     // 574:2874 `line-md:my-location-twotone` — 29.33 square in a 32 x 32 box.
-    icon: { src: "/icons/contact-location.svg", insetX: 4.17, insetY: 4.17 },
+    icon: { src: "/icons/contact-location.svg", insetX: 0, insetY: 0 },
   },
 ];
 

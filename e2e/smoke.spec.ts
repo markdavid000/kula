@@ -46,6 +46,40 @@ test.describe("site shell", () => {
     expect(await robots.text()).toContain("Sitemap:");
   });
 
+  test("publishes structured data and honours the route table", async ({ page, request }) => {
+    await page.goto("/");
+    const types = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) =>
+      scripts.flatMap((s) => {
+        const data = JSON.parse(s.textContent ?? "{}");
+        return (data["@graph"] ?? [data]).map((node: { "@type": string }) => node["@type"]);
+      }),
+    );
+    expect(types).toEqual(expect.arrayContaining(["LocalBusiness", "WebSite", "FAQPage"]));
+
+    await page.goto("/blog");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    expect(await (await request.get("/sitemap.xml")).text()).not.toContain("/blog");
+
+    const llms = await request.get("/llms.txt");
+    expect(llms.ok()).toBe(true);
+    expect(await llms.text()).toContain("## Key facts");
+  });
+
+  test("every page has its own share card, and the app icons are served", async ({ page }) => {
+    for (const path of ["/", "/vendors", "/riders", "/legal/terms"]) {
+      await page.goto(path);
+      const card = await page.locator('meta[property="og:image"]').getAttribute("content");
+      expect(new URL(card ?? "").pathname).toBe(`${path === "/" ? "" : path}/opengraph-image`);
+
+      const image = await page.request.get(card ?? "");
+      expect(image.headers()["content-type"]).toBe("image/png");
+    }
+
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveCount(1);
+    const manifest = await (await page.request.get("/manifest.webmanifest")).json();
+    expect(manifest.icons).toHaveLength(3);
+  });
+
   test("unknown routes return the 404 page", async ({ page }) => {
     const response = await page.goto("/definitely-not-a-page");
     expect(response?.status()).toBe(404);

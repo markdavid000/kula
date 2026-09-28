@@ -103,7 +103,9 @@ export function GetStarted() {
             defaultOpen={0}
             // 32 of padding all round; the design's 16px gap to the body moves
             // onto the body so it collapses with it.
-            itemClassName="relative flex flex-col rounded-[12px] p-5 transition-[filter] duration-300 ease-out sm:p-8 motion-reduce:transition-none"
+            // pb-7 on a phone: the next row overlaps this one by 8px, which left p-5's
+            // 20px as 12 between the answer and the row below.
+            itemClassName="relative flex flex-col rounded-[12px] p-5 pb-7 transition-[filter] duration-300 ease-out sm:p-8 motion-reduce:transition-none"
             itemClosedClassName="hover:brightness-[0.97]"
             // 510:20053 — Gelica SemiBold 28/33.18, Less black.
             questionClassName="text-ink-soft min-w-0 flex-1 text-left text-[clamp(19px,1.9444vw,28px)] leading-[1.185] font-semibold tracking-normal"

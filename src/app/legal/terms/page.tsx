@@ -1,14 +1,21 @@
 import { ReachUs } from "@/components/home/reach-us";
+import { JsonLd } from "@/components/json-ld";
 import { KulaFooter } from "@/components/layout/kula-footer";
 import { LegalPage } from "@/components/legal/legal-page";
 import { termsAndConditions } from "@/content/legal-terms";
-import { createMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd, createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
   title: termsAndConditions.title,
   description: termsAndConditions.intro,
   path: "/legal/terms",
 });
+
+// There is no /legal index page, so the trail goes straight from Home.
+const breadcrumbs = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: termsAndConditions.title, path: "/legal/terms" },
+]);
 
 /**
  * Terms & Conditions — Figma 533:6982 (1440 x 5380).
@@ -26,6 +33,7 @@ export default function TermsPage() {
       <ReachUs />
       {/* 533:7148 — 241px below the contact band (574:2728 ends 3947, strip 4188). */}
       <KulaFooter topGap={241} />
+      <JsonLd data={breadcrumbs} />
     </LegalPage>
   );
 }

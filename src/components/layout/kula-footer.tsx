@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { Container } from "@/components/ui/container";
 import { StoreBadgeLink } from "@/components/ui/store-badge";
@@ -68,12 +69,16 @@ function StoreBadgeRow({ plate }: { plate: "dark" | "light" }) {
 function LinkColumn({ label, links }: { label: string; links: readonly FooterLink[] }) {
   return (
     <nav aria-label={label}>
-      <ul className="flex flex-col gap-4">
+      {/*
+        gap 16 as drawn; below the canvas the links carry the spacing as padding
+        instead, so each is a 45px touch target rather than a 17px line of text.
+      */}
+      <ul className="canvas:gap-4 flex flex-col">
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
-              className="font-sans text-[14px] leading-[16.943px] tracking-[-0.042px] text-white"
+              className="canvas:inline canvas:py-0 block py-3.5 font-sans text-[14px] leading-[16.943px] tracking-[-0.042px] text-white"
             >
               {link.label}
             </Link>
@@ -100,10 +105,34 @@ export function KulaFooter({
   variant?: "consumer" | "vendor";
 }) {
   const isVendor = variant === "vendor";
+  /*
+   * The design's gap is a 1440-canvas number, so it scales the way every fluid
+   * value in globals.css does: the design px as the clamp's max, `px / 14.4` as
+   * the vw coefficient, floored at 48 (or the gap itself, if smaller). A fixed
+   * 232px left a band of empty cream above the footer on a phone.
+   *
+   * A zero or negative gap (Riders' 13px overlap) holds only AT the canvas,
+   * where the section above carries the design's own bottom padding. Below it
+   * that padding is gone, and the overlap put the footer's torn edge 15px under
+   * the last FAQ row, so there the footer takes a plain fluid 48-72px instead.
+   * Two custom properties and a `canvas:` switch, because an inline style
+   * cannot carry a media query.
+   */
+  const fluidGap =
+    topGap > 0
+      ? `clamp(${Math.min(topGap, 48)}px, ${topGap / 14.4}vw, ${topGap}px)`
+      : "clamp(48px, 5vw, 72px)";
+  const gapStyle = {
+    "--footer-gap": fluidGap,
+    "--footer-gap-canvas": `${topGap}px`,
+  } as CSSProperties;
   const card = isVendor ? footer.vendorCard : footer.card;
 
   return (
-    <footer className="bg-cream-light relative isolate" style={{ marginTop: topGap }}>
+    <footer
+      className="bg-cream-light canvas:mt-(--footer-gap-canvas) relative isolate mt-(--footer-gap)"
+      style={gapStyle}
+    >
       {/* ---------------------------------------------------------------- */}
       {/* 264:3067 CTA-Strip — 1440 x 240, Primary Green, 100px gutters,    */}
       {/* space-between, contents vertically centred.                       */}
@@ -168,7 +197,13 @@ export function KulaFooter({
       {/* Static on purpose: the card below positions against the <footer>, */}
       {/* not against this spacer.                                          */}
       {/* ---------------------------------------------------------------- */}
-      <div className="canvas:h-[606px] canvas:px-0 canvas:py-0 px-(--spacing-gutter) py-12">
+      {/*
+        Below the canvas the bottom padding must clear the dark plate's torn
+        edge, which reaches clamp(34px, 4.2361vw, 61px) UP into this band, plus
+        real breathing room. A plain py-12 was eaten by that overhang: the card
+        sat 14px off the edge on a phone and overlapped it from ~1200px up.
+      */}
+      <div className="canvas:h-[606px] canvas:px-0 canvas:py-0 px-(--spacing-gutter) pt-12 pb-[calc(clamp(34px,4.2361vw,61px)+clamp(40px,4.4444vw,64px))]">
         {/*
           The card box. Absolute against the <footer> at the canvas so the
           design offsets still resolve; in flow below it. It carries no
@@ -203,6 +238,14 @@ export function KulaFooter({
           Drawn only at the design width: it is a fixed-offset decoration and has
           no meaning once the card starts resizing.
         */}
+          {/*
+            The Vendors chef, at the canvas only: it hangs 161px over the card's
+            empty right half, as 520:6869 draws it. Below the canvas the card's
+            copy fills its width and there is no empty half to overhang, so the
+            chef moves INSIDE the card under the copy (see below), the way Home
+            and Riders carry their illustration. Hidden copies are lazy, so each
+            width downloads only the one it shows.
+          */}
           {isVendor && (
             <Image
               src="/images/footer/vendor-mascot@2x.webp"
@@ -210,7 +253,7 @@ export function KulaFooter({
               width={660}
               height={660}
               sizes="660px"
-              className="canvas:absolute canvas:-top-[161px] canvas:left-1/2 canvas:mx-0 canvas:-mb-0 canvas:ml-[-18px] canvas:w-[660px] relative z-40 mx-auto -mb-4 block h-auto w-[clamp(170px,32vw,300px)] max-w-none"
+              className="canvas:block absolute -top-[161px] left-1/2 z-40 ml-[-18px] hidden h-auto w-[660px] max-w-none"
             />
           )}
           {/* The card's own box, so the offset plate sizes to the CARD, not to
@@ -237,8 +280,11 @@ export function KulaFooter({
         */}
             <div className="bg-cream-warm inset-ring-ink canvas:h-[450px] relative z-30 overflow-hidden rounded-[24px] inset-ring-1">
               {/* 264:3046 — heading over the app pitch, gap 32, 82 from the card's
-              left edge and 135 from its top. */}
-              <div className="canvas:absolute canvas:top-[135px] canvas:left-[82px] canvas:w-[587px] canvas:p-0 flex flex-col gap-8 p-7 sm:p-10">
+              left edge and 135 from its top. The gap scales with the heading
+              (32 at the canvas, 2.2222vw = 32/14.4, floored at 12): a fixed 32
+              under a heading that has shrunk to ~22px read as two blocks
+              rather than a title and its line. */}
+              <div className="canvas:absolute canvas:top-[135px] canvas:left-[82px] canvas:w-[587px] canvas:p-0 flex flex-col gap-[clamp(12px,2.2222vw,32px)] p-7 sm:p-10">
                 {/* 264:3047 — Gelica Bold 36/42.66. */}
                 <h2 className="text-ink text-[clamp(22px,2.5vw,36px)] leading-[1.185] font-bold">
                   {card.heading}
@@ -279,6 +325,31 @@ export function KulaFooter({
                   className="canvas:absolute canvas:top-[2px] canvas:left-[695px] canvas:h-[448px] canvas:w-[587px] block h-auto w-full max-w-none"
                 />
               )}
+
+              {/*
+                The Vendors chef below the canvas: inside the card, under the
+                copy, like Home's and Riders' illustration. The art is a cut-out
+                on transparency rather than a full-bleed scene, so it keeps the
+                copy's side padding and centres, filling the card up to 440px.
+              */}
+              {isVendor && (
+                <div className="canvas:hidden px-7 pb-7 sm:px-10 sm:pb-10">
+                  <div className="mx-auto w-full max-w-[440px]">
+                    <Image
+                      src="/images/footer/vendor-mascot@2x.webp"
+                      alt={card.imageAlt}
+                      width={660}
+                      height={660}
+                      sizes="(max-width: 520px) calc(100vw - 7rem), 440px"
+                      // The square art is 10.2% empty above the hat and 8.4%
+                      // below the board. Percentage margins resolve against the
+                      // wrapper, which is the image's own width, so these trim
+                      // exactly that air and the gaps read as the padding says.
+                      className="-mt-[10.2%] -mb-[8.4%] block h-auto w-full"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -298,10 +369,15 @@ export function KulaFooter({
 
           Like the strip's edges, both files must carry
           `preserveAspectRatio="none"`.
+
+          Below the canvas each takes half the width, plus 1px so the two
+          overlap instead of leaving a hairline seam where they meet. The 296px between them is
+          covered by the app card at the design width; once the card stops
+          overhanging the plate, that gap showed as a cream notch in the plate.
         */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-[clamp(34px,4.2361vw,61px)] left-0 h-[clamp(44px,5.5556vw,80px)] w-[39.7222%] overflow-hidden"
+          className="canvas:w-[39.7222%] pointer-events-none absolute -top-[clamp(34px,4.2361vw,61px)] left-0 h-[clamp(44px,5.5556vw,80px)] w-[calc(50%+1px)] overflow-hidden"
         >
           <Image
             aria-hidden
@@ -314,7 +390,7 @@ export function KulaFooter({
         </div>
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-[clamp(34px,4.2361vw,61px)] right-0 h-[clamp(44px,5.5556vw,80px)] w-[39.7222%] overflow-hidden"
+          className="canvas:w-[39.7222%] pointer-events-none absolute -top-[clamp(34px,4.2361vw,61px)] right-0 h-[clamp(44px,5.5556vw,80px)] w-[calc(50%+1px)] overflow-hidden"
         >
           <Image
             aria-hidden
@@ -368,7 +444,7 @@ export function KulaFooter({
             <LinkColumn label="Legal" links={footer.legalLinks} />
 
             {/* 520:6970 — 128 wide (fixed), heading over icons, gap 24. */}
-            <div className="flex w-[128px] flex-col gap-6">
+            <div className="canvas:w-[128px] flex flex-col gap-6">
               {/* 520:6971 — Inter 16/19.364. */}
               <p
                 id="footer-social-heading"
@@ -384,7 +460,7 @@ export function KulaFooter({
                 carries the accessible name, so the <img> alt is emptied and the
                 name moves to the link itself.
               */}
-              <ul aria-labelledby="footer-social-heading" className="flex gap-4">
+              <ul aria-labelledby="footer-social-heading" className="canvas:gap-4 flex gap-1">
                 {socialAccounts.map((account) => (
                   <li key={account.name} className="flex">
                     <a
@@ -393,7 +469,9 @@ export function KulaFooter({
                       rel="noopener noreferrer"
                       aria-label={`Kula on ${account.name}`}
                       className={cn(
-                        "flex h-8 w-8 cursor-pointer items-center justify-center rounded-full",
+                        // 32 as drawn; a 44 touch target below the canvas, with
+                        // the icon still 32 inside it.
+                        "canvas:size-8 flex size-11 cursor-pointer items-center justify-center rounded-full",
                         "transition-[transform,opacity] duration-200 ease-out motion-reduce:transition-none",
                         "opacity-80 hover:scale-110 hover:opacity-100 active:scale-95",
                       )}

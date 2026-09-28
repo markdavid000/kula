@@ -71,8 +71,10 @@ export function WeTakeCare() {
   return (
     <section
       aria-labelledby="riders-care-heading"
-      // 168px below the yellow card, which ends at page y 1975.
-      className="canvas:px-0 mt-[clamp(72px,11.6667vw,168px)] px-(--spacing-gutter)"
+      // 168px below the yellow card, which ends at page y 1975. The floor is 104,
+      // not 72: the card's eyes hang ~40px off its bottom corner, and at 72 they
+      // crowded this heading on a phone.
+      className="canvas:px-0 mt-[clamp(104px,11.6667vw,168px)] px-(--spacing-gutter)"
     >
       <div className="mx-auto flex w-full max-w-[1144px] flex-col items-center gap-10">
         {/* 441:6518 — Gelica Black 60/71.1, centred, over a hard Orange shadow. */}

@@ -48,7 +48,12 @@ export function MealVariety() {
     <section
       aria-labelledby="meal-variety-heading"
       className={cn(
-        "bg-cream relative mt-[clamp(88px,19.4444vw,280px)] pt-12 pb-6",
+        // Below the canvas the heading starts under the eyes, not beside them. The
+        // eyes are clamp(72px, 11.7361vw, 169px) wide at 169:231, so
+        // clamp(98px, 16.0417vw, 231px) tall, hanging from 51px above the
+        // section; the padding is their foot plus 16. A fixed pt-16 cleared them
+        // only on a phone — at laptop widths the one-line heading ran under them.
+        "bg-cream canvas:pt-12 relative mt-[clamp(88px,19.4444vw,280px)] pt-[calc(clamp(98px,16.0417vw,231px)-35px)] pb-6",
         // The one number the band scales by: the stage's scale and the band's
         // height both read it, so they can never drift apart.
         // The row spans 1008px (x 179..1187). Each step is the largest scale

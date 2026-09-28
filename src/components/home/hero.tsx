@@ -220,8 +220,9 @@ export function Hero() {
         // own height and narrower screens fall back to their content.
         "min-h-[clamp(600px,66.5972vw,959px)]",
         // Room under the focal dish for the arc to close. None at the canvas,
-        // where the ellipse supplies its own.
-        "canvas:pb-0 pb-14",
+        // where the ellipse supplies its own. Fluid, so a tablet-width hero
+        // does not end with the dish pressed against the curve.
+        "canvas:pb-0 pb-[clamp(64px,9vw,112px)]",
       )}
     >
       {/*
@@ -273,10 +274,21 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Copy block — 264:2615: 915 wide, 243 from the top, gap 40. */}
-      <div className="canvas:px-0 relative mx-auto flex w-full max-w-[915px] flex-col items-center gap-[clamp(24px,2.7778vw,40px)] px-5 pt-[clamp(104px,16.875vw,243px)] sm:px-8">
-        {/* 264:2616 — gap 16. */}
-        <div className="flex flex-col items-center gap-4 text-center text-white">
+      {/*
+        Copy block — 264:2615: 915 wide, 243 from the top, gap 40.
+
+        The 243 is the fixed header's 118px wave band PLUS 125 of clear space,
+        so it is written as that sum: the band's own clamp, then the space
+        scaled from the design. A single clamp on the 243 shrank the clearance
+        along with everything else, leaving the headline ~28px under the wave
+        on a tablet. At the canvas the two resolve to 118 + 125 = 243 exactly.
+
+        The gap floors at 36, not 24, so the copy, search bar and dish each get
+        room on a phone; at the canvas it is the design's 40.
+      */}
+      <div className="canvas:px-0 relative mx-auto flex w-full max-w-[915px] flex-col items-center gap-[clamp(36px,2.7778vw,40px)] px-5 pt-[calc(clamp(76px,8.1944vw,118px)+clamp(48px,8.6806vw,125px))] sm:px-8">
+        {/* 264:2616 — gap 16 at the canvas; 20 below it, where the headline wraps. */}
+        <div className="canvas:gap-4 flex flex-col items-center gap-5 text-center text-white">
           {/*
             264:2617. Gelica SemiBold 60/72, -1.2px, `textCase: TITLE`. The
             display face is substituted — see globals.css.
@@ -300,7 +312,7 @@ export function Hero() {
           method="get"
           action="/vendors"
           role="search"
-          className="bg-cream canvas:pl-6 flex w-full max-w-[566px] items-center justify-between gap-2 rounded-[48px] border border-[#e0e0e0] py-2 pr-2 pl-4 shadow-[0_9px_26px_-12px_rgba(226,235,223,0.25)]"
+          className="bg-cream canvas:pl-6 flex w-full max-w-[566px] items-center justify-between gap-2 rounded-[48px] border border-[#e0e0e0] py-2 pr-2 pl-4 shadow-[0_9px_26px_-12px_rgba(226,235,223,0.25)] max-sm:gap-1 max-sm:py-1 max-sm:pr-1 max-sm:pl-3"
         >
           {/* 264:2633 — gap 4. */}
           <span className="flex min-w-0 flex-1 items-center gap-1">
@@ -308,16 +320,33 @@ export function Hero() {
             <label htmlFor="hero-search" className="sr-only">
               {hero.searchLabel}
             </label>
-            {/* 264:2638 — Inter 11/16.5, no tracking. */}
+            {/*
+              264:2638 — Inter 11/16.5, no tracking, at the canvas. Below it the
+              field is 16px: iOS Safari zooms the whole page into any input set
+              under 16px when it is tapped, and does not zoom back out.
+            */}
             <input
               id="hero-search"
               name="q"
               type="search"
               placeholder={hero.searchPlaceholder}
-              className="text-ink placeholder:text-ink w-full min-w-0 bg-transparent font-sans text-[11px] leading-[16.5px] outline-none"
+              className="text-ink placeholder:text-ink canvas:text-[11px] canvas:leading-[16.5px] canvas:h-auto h-11 w-full min-w-0 bg-transparent font-sans text-[16px] leading-6 outline-none"
             />
           </span>
-          <Button className="shrink-0 cursor-pointer" type="submit">
+          {/*
+            On a phone the field needs ~150px for its 16px placeholder, so the
+            button gives up its arrow and 8px of padding each side — without
+            that the placeholder was cut to "Search for a m".
+
+            It is also shorter there: 48px (py-2.5) rather than 56, with the
+            bar hugging it at 4px, so the whole bar is ~58px instead of 74. The
+            design's 56px button made the search the heaviest thing in a phone
+            hero. 48 still clears the 44px touch minimum.
+          */}
+          <Button
+            className="shrink-0 cursor-pointer max-sm:px-4 max-sm:py-2.5 max-sm:[&>span:last-child]:hidden"
+            type="submit"
+          >
             {hero.cta}
           </Button>
         </form>
@@ -328,7 +357,8 @@ export function Hero() {
           piece directly under the search bar — the one dish drawn at full size
           and in focus, with the arc closing beneath it.
         */}
-        <NoodleBlob aria-hidden className="canvas:hidden mt-1" />
+        {/* mt-8: the rotated "Spicy Noodles" tag rises ~20px above the blob. */}
+        <NoodleBlob aria-hidden className="canvas:hidden mt-8" />
       </div>
 
       {/*

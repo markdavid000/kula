@@ -43,6 +43,9 @@ const notoSans = Noto_Sans({
   style: ["italic"],
   variable: "--font-noto-sans",
   display: "swap",
+  // Only the stats ticker, far below the fold: not worth competing with the
+  // hero for bandwidth. It still loads as soon as the ticker's CSS asks for it.
+  preload: false,
 });
 
 /**
@@ -55,6 +58,8 @@ const youngSerif = Young_Serif({
   weight: ["400"],
   variable: "--font-young-serif",
   display: "swap",
+  // FAQ questions only, always below the fold — see Noto Sans above.
+  preload: false,
 });
 
 /** Stands in for the design's licensed Gelica display face — see globals.css. */
@@ -73,7 +78,8 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  alternates: { canonical: "/" },
+  // No site-wide canonical: it would be inherited by any page that forgets its
+  // own and point that page at the home page. `createMetadata` sets one per page.
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
@@ -90,7 +96,27 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    // No length caps on snippets or previews: Google, and the AI answers built
+    // on its index, may quote as much of a page as is useful.
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  /*
+   * Search-console ownership tokens, from the environment so no account's token
+   * is committed. Unset, no tag is emitted. Google's DNS TXT record is the
+   * better proof (it covers every subdomain and protocol); this is the fallback.
+   */
+  verification: {
+    // `|| undefined`: a blank line copied from .env.example is "", not unset.
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
   },
   // Stops iOS Safari auto-linking numbers in copy as phone numbers.
   formatDetection: { telephone: false, address: false, email: false },

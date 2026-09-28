@@ -178,7 +178,7 @@ export const ridersSteps = {
       title: "Start Earning",
       // NOT FROM FIGMA — authored; the design draws this step collapsed.
       answer:
-        "Go online and accept your first trip. You are paid per delivery plus distance, you keep your tips, and your first payout lands the Monday after you start.",
+        "Go online and accept your first trip. You are paid per delivery plus distance, you keep your tips, and you can cash out your earnings at the end of your very first day.",
       surface: "bg-lemon-bright",
     },
   ] as readonly RiderStep[],
@@ -212,9 +212,14 @@ export const ridersFaq = {
       node: "441:6638",
       /** 441:6640 */
       question: "What type of motorcycle do I need?",
-      /** 441:6644 */
+      /*
+       * DIRECTED — replaces the design's 441:6644, which is the Home FAQ's
+       * ordering answer pasted under a motorcycle question. Written to agree
+       * with the design's own requirement in 510:25751: "a valid ID, phone
+       * number, and a working motorcycle".
+       */
       answer:
-        "Simply browse our curated list of the best local kitchens in Makurdi, add your favorites to your basket, and select your delivery zone. We handle the rest, from the kitchen to your doorstep.",
+        "Any working, roadworthy motorcycle will do. Bring it along with a valid ID and a phone number when you register. We check the bike before your first trip and give you an insulated Kula delivery bag.",
     },
     // 441:6645 / 441:6647
     {
@@ -234,21 +239,21 @@ export const ridersFaq = {
     {
       node: "441:6659",
       answer:
-        "You earn a fee per delivery plus distance, and you keep every tip. Earnings show in the app as you ride and land in your bank account each Monday.",
+        "You earn a fee per delivery plus distance, and you keep every tip. Earnings show in the app as you ride, and you can cash out every day to your bank account or mobile money wallet.",
       question: "How does payment work?",
     },
     // 441:6666 / 441:6668
     {
       node: "441:6666",
       answer:
-        "No quota and no penalty for a quiet week. Riders who stay online through the busy hours simply see more orders, because we offer trips to the nearest rider first.",
+        "No quota and no penalty for a quiet week. The more you ride, though, the higher your priority score, and top riders get first pick of nearby high-value orders.",
       question: "Is there a minimum number of deliveries?",
     },
     // 441:6673 / 441:6675
     {
       node: "441:6673",
       answer:
-        "Right now we ride in Makurdi and Gboko. We are opening new towns across Benue through the year, so sign up anyway and we will reach out when yours goes live.",
+        "No. Kula riders deliver across Makurdi, Gboko and Otukpo. We are opening more towns across Benue, so sign up anyway and we will reach out when yours goes live.",
       question: "Do I need to be in Makurdi?",
     },
   ] as readonly RiderFaqItem[],

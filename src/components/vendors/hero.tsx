@@ -72,12 +72,20 @@ export function VendorsHero() {
           rather than squeezed down to the viewport, so the food stays legible
           on a phone instead of becoming a 146px ribbon.
         */}
-        <div className="canvas:mt-0 canvas:h-auto canvas:overflow-visible relative mt-10 h-[clamp(200px,37.3611vw,538px)] w-full overflow-hidden">
+        <div className="canvas:mt-0 canvas:h-auto canvas:overflow-visible relative mt-10 h-[clamp(284px,37.3611vw,538px)] w-full overflow-hidden">
           <Image
             src="/images/vendors/food-band@2x.webp"
             alt=""
             width={1440}
             height={538}
+            // The band is 759 x 283 art. From 760px up its box is 100vw x
+            // 37.3611vw — the art's own ratio — but below that it holds 760
+            // wide, so the height floors at 284 (760 / 2.677) rather than 200,
+            // which had squashed the food 42% flat on a phone.
+            //
+            // Never narrower than its 760px floor, otherwise the viewport width.
+            // Without this the browser assumes 1440 and a phone downloads 3840w.
+            sizes="(max-width: 760px) 760px, 100vw"
             priority
             className="canvas:absolute canvas:inset-x-0 canvas:top-[398px] canvas:left-0 canvas:h-[538px] canvas:w-full canvas:min-w-0 canvas:translate-x-0 absolute left-1/2 h-full w-full max-w-none min-w-[760px] -translate-x-1/2"
           />
