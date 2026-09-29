@@ -6,6 +6,11 @@ test.describe("site shell", () => {
 
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
 
+    // Below xl the links live in the disclosure panel, so a phone opens it
+    // first — the same thing a person on that phone would do.
+    const menu = page.getByRole("button", { name: "Open main menu" });
+    if (await menu.isVisible()) await menu.click();
+
     await page
       .getByRole("navigation", { name: "Primary" })
       .first()
@@ -15,10 +20,12 @@ test.describe("site shell", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Ride");
   });
 
-  test("skip link is the first tab stop and moves focus to main", async ({ page }) => {
+  test("skip link is the first tab stop and moves focus to main", async ({ page, browserName }) => {
     await page.goto("/");
 
-    await page.keyboard.press("Tab");
+    // Safari's Tab reaches only form controls by default; Option+Tab is how a
+    // Safari keyboard user moves between links, and WebKit reproduces that.
+    await page.keyboard.press(browserName === "webkit" ? "Alt+Tab" : "Tab");
     const skip = page.getByRole("link", { name: "Skip to main content" });
     await expect(skip).toBeFocused();
 
@@ -71,7 +78,9 @@ test.describe("site shell", () => {
       const card = await page.locator('meta[property="og:image"]').getAttribute("content");
       expect(new URL(card ?? "").pathname).toBe(`${path === "/" ? "" : path}/opengraph-image`);
 
-      const image = await page.request.get(card ?? "");
+      // The card URL is absolute on the configured site origin, which in CI is
+      // a placeholder domain; fetch its path from the server under test.
+      const image = await page.request.get(new URL(card ?? "").pathname);
       expect(image.headers()["content-type"]).toBe("image/png");
     }
 

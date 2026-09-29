@@ -3,12 +3,15 @@ import { describe, expect, it } from "vitest";
 import sitemap from "@/app/sitemap";
 import { pageIndex } from "@/lib/routes";
 import { createMetadata, faqPageJsonLd, organizationJsonLd } from "@/lib/seo";
+import { siteConfig } from "@/lib/site";
 
 describe("createMetadata", () => {
   it("gives indexable pages an absolute canonical and no robots override", () => {
     const meta = createMetadata({ title: "Riders", description: "d", path: "/riders" });
 
-    expect(meta.alternates?.canonical).toBe("http://localhost:3000/riders");
+    // The origin comes from NEXT_PUBLIC_SITE_URL, which differs between a laptop
+    // and CI, so assert against whatever the build resolved.
+    expect(meta.alternates?.canonical).toBe(`${siteConfig.url}/riders`);
     expect(meta.robots).toBeUndefined();
   });
 

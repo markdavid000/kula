@@ -8,7 +8,12 @@ import { siteConfig } from "@/lib/site";
 describe("/llms.txt", () => {
   it("links every indexable page and no other", async () => {
     const text = await GET().text();
-    const linked = [...text.matchAll(/\]\(http:\/\/localhost:3000([^)]*)\)/g)].map((m) => m[1]);
+    // Links are absolute on whatever origin the build resolved (localhost on a
+    // laptop, NEXT_PUBLIC_SITE_URL in CI), so read the paths off that origin.
+    const linked = [...text.matchAll(/\]\((https?:\/\/[^)]+)\)/g)]
+      .map((m) => new URL(m[1]!))
+      .filter((url) => url.origin === new URL(siteConfig.url).origin)
+      .map((url) => url.pathname);
     const indexable = Object.entries(pageIndex)
       .filter(([, entry]) => entry.indexable)
       .map(([path]) => path);
