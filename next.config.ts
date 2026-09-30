@@ -42,7 +42,14 @@ const securityHeaders = [
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'none'",
-      "upgrade-insecure-requests",
+      /*
+       * No `upgrade-insecure-requests`. Every asset is same-origin and relative,
+       * so there is nothing on http:// for it to upgrade, and HSTS above already
+       * pins the site to https. What it DID do is break any plain-http serving:
+       * WebKit (unlike Chromium) applies it to localhost, rewrote every CSS, JS
+       * and font request to https://localhost, and rendered the page unstyled —
+       * which is what failed the WebKit end-to-end tests.
+       */
     ].join("; "),
   },
 ];

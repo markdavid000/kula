@@ -1,17 +1,24 @@
 import { ReachUs } from "@/components/home/reach-us";
+import { JsonLd } from "@/components/json-ld";
 import { KulaFooter } from "@/components/layout/kula-footer";
 import { VendorBenefits } from "@/components/vendors/vendor-benefits";
 import { VendorsFaq } from "@/components/vendors/faq-section";
 import { GetStarted } from "@/components/vendors/get-started";
 import { VendorsHero } from "@/components/vendors/hero";
-import { vendorsHero } from "@/content/vendors-page";
-import { createMetadata } from "@/lib/seo";
+import { vendorsFaqItems, vendorsHero } from "@/content/vendors-page";
+import { breadcrumbJsonLd, createMetadata, faqPageJsonLd } from "@/lib/seo";
 
 export const metadata = createMetadata({
   title: "Vendors",
   description: vendorsHero.subtitle,
   path: "/vendors",
 });
+
+const faqJsonLd = faqPageJsonLd(vendorsFaqItems);
+const breadcrumbs = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: "Vendors", path: "/vendors" },
+]);
 
 /**
  * Vendors — Figma node 510:20048 (1440 x 7075).
@@ -63,6 +70,9 @@ export default function VendorsPage() {
 
       {/* 510:20150 — 232px below the contact band (574:2901 ends 5307, strip 5539). */}
       <KulaFooter topGap={232} variant="vendor" />
+
+      <JsonLd data={breadcrumbs} />
+      {faqJsonLd ? <JsonLd data={faqJsonLd} /> : null}
     </>
   );
 }

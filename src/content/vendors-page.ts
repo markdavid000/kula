@@ -147,14 +147,15 @@ export interface VendorFaqItem {
 export const vendorsFaqItems: readonly VendorFaqItem[] = [
   {
     node: "510:20108",
-    /*
-     * Transcribed verbatim. The question asks about a motorcycle and the answer
-     * is about vendor fees — the design's own mismatch, flagged in the handover
-     * rather than silently corrected.
-     */
+    // The question is transcribed verbatim.
     question: "What type of motorcycle do I need?",
+    /*
+     * DIRECTED — replaces the design's 510:20112, which answered a different
+     * question ("Kula offers a fee-free experience for all vendors…"). The
+     * fee-free point is not lost: "When do I receive my payments?" carries it.
+     */
     answer:
-      "Kula offers a fee-free experience for all vendors, ensuring you can focus on your business without worrying about additional costs.",
+      "None. As a vendor you never deliver. A Kula rider collects every order from your kitchen and takes it to the customer, so all you have to do is cook and pack.",
   },
   {
     node: "510:20115",
@@ -166,7 +167,7 @@ export const vendorsFaqItems: readonly VendorFaqItem[] = [
     node: "510:20122",
     question: "When do I receive my payments?",
     answer:
-      "Every Monday we pay the previous week straight into your bank account. Kula takes no commission on your food, so what a customer pays for a dish is what reaches you.",
+      "Every Monday we pay the previous week straight into your bank account. Selling on Kula is fee-free: we take no commission on your food, so what a customer pays for a dish is what reaches you.",
   },
   {
     node: "510:20129",

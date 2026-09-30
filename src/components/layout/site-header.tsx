@@ -86,7 +86,16 @@ const appLinks = [
 /** Shared between the bar and the disclosure panel. */
 const storeButton = cn(
   "border-ink flex cursor-pointer items-center justify-center overflow-clip rounded-[72px] border bg-white/6",
-  "size-11 p-3 canvas:size-14 canvas:p-4",
+  // 56 with a 24px icon at the canvas. Below it the button is 44, and p-3 plus
+  // the 1px border left 18px inside — narrower than the 24px icon, so flex
+  // shrank the icon's WIDTH and not its height and the Apple mark drew 18 x 24,
+  // visibly stretched. p-2.5 leaves 22px for a 20px icon that cannot shrink.
+  //
+  // The canvas had the same fault, only milder: 56 less p-4 and the 1px border
+  // is 22, and the image's preflight `max-width: 100%` clamped the 24px icon to
+  // 22 x 24. Figma draws the stroke INSIDE the 16px padding, so 15px plus the
+  // border is the design's own 24px box.
+  "size-11 p-2.5 canvas:size-14 canvas:p-[15px]",
   "transition-[transform,background-color] duration-200 ease-out motion-reduce:transition-none",
   "hover:bg-ink/10 hover:scale-105 active:scale-95",
 );
@@ -139,7 +148,10 @@ export function SiteHeader() {
         } as CSSProperties
       }
     >
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-(--kula-wave)">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-(--kula-wave)"
+      >
         {waves.map((wave) => (
           <div
             key={wave.src}
@@ -157,8 +169,8 @@ export function SiteHeader() {
         ))}
       </div>
 
-      <Container className="canvas:py-5 relative flex h-(--kula-bar) items-center justify-between gap-3 py-3">
-        <Link href="/" className="block shrink-0">
+      <Container className="canvas:py-5 relative z-20 flex h-(--kula-bar) items-center justify-between gap-3 py-3">
+        <Link href="/" className="flex min-h-11 shrink-0 items-center">
           <Image
             src="/images/logo/kula-wordmark@2x.png"
             alt={`${siteConfig.name} — home`}
@@ -205,7 +217,13 @@ export function SiteHeader() {
                 aria-label={app.label}
                 className={storeButton}
               >
-                <Image src={app.src} alt="" width={24} height={24} className="size-6" />
+                <Image
+                  src={app.src}
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="canvas:size-6 size-5 max-w-none shrink-0"
+                />
               </a>
             ))}
           </div>
@@ -256,15 +274,25 @@ export function SiteHeader() {
         `visibility` is what takes the collapsed panel out of the tab order —
         height alone would leave the links focusable behind the fold.
       */}
+      {/*
+        The panel starts at the bar's bottom edge, UNDER the wave band (the
+        waves are z-10, the panel is not). It used to be pushed down below the
+        band so the scallops would not be sliced, which left the page showing
+        through between the scallops and the panel's flat top — the lower wave
+        strips are translucent glass. Tucked under, the cream scallops melt into
+        the cream panel and the glass tints the panel instead of the page. The
+        top padding is the band's overhang, so the first link clears the waves.
+        It also starts 24px up behind the (transparent) bar: at the far left and
+        right the band curls up, and without that the page peeked through the
+        two corners above the panel.
+
+        Soft bottom corners and the shadow live on this outer box: the inner
+        wrapper has to clip for the 0fr/1fr collapse, and would clip them.
+      */}
       <div
         id="primary-nav-panel"
-        /*
-         * The band is taller than the bar, so the panel is pushed down by the
-         * difference — otherwise it starts mid-wave and slices the scallop off.
-         */
-        style={{ marginTop: "calc(var(--kula-wave) - var(--kula-bar))" }}
         className={cn(
-          "grid xl:hidden",
+          "-mt-6 grid overflow-hidden rounded-b-[28px] shadow-[0_18px_40px_-24px_rgba(7,31,16,0.45)] xl:hidden",
           "transition-[grid-template-rows,visibility] duration-300 ease-out motion-reduce:transition-none",
           open ? "visible grid-rows-[1fr]" : "invisible grid-rows-[0fr]",
         )}
@@ -272,9 +300,9 @@ export function SiteHeader() {
         <div className="overflow-hidden">
           <nav
             aria-label="Primary"
-            className="bg-cream border-ink/10 relative border-t shadow-[0_18px_40px_-24px_rgba(7,31,16,0.45)]"
+            className="bg-cream relative pt-[calc(var(--kula-wave)-var(--kula-bar)+1.5rem)]"
           >
-            <Container className="py-2">
+            <Container className="pt-2 pb-3">
               <ul className="flex flex-col">
                 {primaryNav.map((item) => (
                   <li key={item.href} className="border-ink/8 border-b last:border-b-0">
@@ -306,7 +334,13 @@ export function SiteHeader() {
                     aria-label={app.label}
                     className={storeButton}
                   >
-                    <Image src={app.src} alt="" width={24} height={24} className="size-6" />
+                    <Image
+                      src={app.src}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="canvas:size-6 size-5 max-w-none shrink-0"
+                    />
                   </a>
                 ))}
               </div>

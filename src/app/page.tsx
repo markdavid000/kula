@@ -7,8 +7,10 @@ import { StatsTicker } from "@/components/home/stats-ticker";
 import { TasteTheHype } from "@/components/home/taste-the-hype";
 import { ThreeSteps } from "@/components/home/three-steps";
 import { WhyKula } from "@/components/home/why-kula";
+import { JsonLd } from "@/components/json-ld";
 import { KulaFooter } from "@/components/layout/kula-footer";
-import { createMetadata } from "@/lib/seo";
+import { homeFaqItems } from "@/content/home-faq";
+import { createMetadata, faqPageJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
 export const metadata = createMetadata({
@@ -16,6 +18,8 @@ export const metadata = createMetadata({
   description: siteConfig.description,
   path: "/",
 });
+
+const faqJsonLd = faqPageJsonLd(homeFaqItems);
 
 /**
  * Home — Figma node 264:2259.
@@ -65,6 +69,8 @@ export default function HomePage() {
 
       {/* 264:3012 — 12px below the contact band (574:2843 ends 8749, strip 8761). */}
       <KulaFooter topGap={12} />
+
+      {faqJsonLd ? <JsonLd data={faqJsonLd} /> : null}
     </>
   );
 }

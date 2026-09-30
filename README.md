@@ -63,6 +63,27 @@ in place, change `--font-display` in `globals.css` and the `Bitter` import in
 - AVIF/WebP via `next/image` with explicit `sizes`; the first vendor card is
   marked `priority` for LCP.
 
+### SEO and AI search
+
+- **`src/lib/routes.ts` decides indexing.** Every page is listed there with an
+  `indexable` flag. The sitemap is built from it and `createMetadata` emits
+  `noindex` from it, and `createMetadata` rejects a path that is not listed, so
+  a new page cannot ship without that decision. Non-indexable pages are not
+  disallowed in robots.txt — a blocked crawler never sees the `noindex`.
+- **Structured data** (`src/lib/seo.ts`): a site-wide `LocalBusiness` +
+  `WebSite` graph, `FAQPage` on Home, Vendors and Riders, and breadcrumbs on the
+  inner pages. It is built from the same content modules the pages render.
+- **`/llms.txt`** is a Markdown fact sheet for AI assistants, assembled from
+  that same content. It is a courtesy to crawlers that read it; the prerendered
+  pages are what answer engines actually rely on.
+- **Share cards.** Each page has its own `opengraph-image.tsx`, drawn by
+  `src/lib/og.tsx` from that page's hero copy. Satori cannot read woff2 or webp,
+  so its fonts and artwork live as woff/png in `assets/og/`. Do not add an
+  `images` field to `createMetadata`: in Next 16.3 a config image beats a
+  route's own card file, which would put the Home card on every page.
+- **Search-console verification** reads `GOOGLE_SITE_VERIFICATION` and
+  `BING_SITE_VERIFICATION` (see `.env.example`). Unset, no tag is emitted.
+
 ### Security
 
 `next.config.ts` sets HSTS, CSP, `Permissions-Policy`, `Referrer-Policy` and
@@ -124,9 +145,12 @@ document. It is never paraphrased or regenerated.
 - **FAQ answers.** The design draws its accordions collapsed, so only one answer
   per page exists in the file. Those are verbatim; the rest are marked
   `draft: true` in `src/content/faq.ts` and need sign-off. Grep for `draft: true`.
-- **Contact form delivery.** `src/app/contact/actions.ts` validates and guards
-  against bots but has no provider wired up, so it reports the failure and
-  points senders at the published email rather than pretending to succeed.
+- **Contact form delivery.** Both forms (`/contact` and the "Need to Reach us?"
+  band) post to `src/app/contact/actions.ts`, which validates, rate-limits and
+  sends through Resend (`src/lib/email.ts`) with the visitor as Reply-To. It
+  needs `RESEND_API_KEY` (see `.env.example`); without it the form says so and
+  points senders at the published email rather than pretending to succeed. The
+  rate limit is in-memory, per server instance.
 - **Imagery.** The "3 easy steps" illustrations are placed, rendered from Figma
   at 2× into `public/images/`. The design's vendor cards use flat placeholder
   shapes rather than photos, so those match as-is. Remaining decorative art

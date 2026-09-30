@@ -54,7 +54,7 @@ interface Phone {
 
 const PHONES: readonly Phone[] = [
   {
-    src: "/images/home/mockup_three.svg",
+    src: "/images/home/mockup_three@2x.webp",
     w: 219,
     h: 360,
     left: 49.771,
@@ -65,7 +65,7 @@ const PHONES: readonly Phone[] = [
     fan: "group-hover/phones:translate-x-[110.959%]",
   },
   {
-    src: "/images/home/mockup_two.svg",
+    src: "/images/home/mockup_two@2x.webp",
     w: 236,
     h: 442,
     left: 27.064,
@@ -76,7 +76,7 @@ const PHONES: readonly Phone[] = [
     fan: "group-hover/phones:translate-x-[51.271%]",
   },
   {
-    src: "/images/home/mockup_one.svg",
+    src: "/images/home/mockup_one@2x.webp",
     w: 300,
     h: 562,
     left: 0,
@@ -103,10 +103,13 @@ function VendorCard({ vendor, priority }: { vendor: Vendor; priority: boolean })
         cn(
           // 360 as drawn, but never wider than the scrollport. A snap item wider
           // than its snapport makes the browser clamp instead of snapping, which
-          // left the last few pixels of the track unreachable on a phone — and a
-          // card wider than the screen was wrong there anyway. 3.5rem is the
-          // track's 24px inset either side plus room for a scrollbar.
-          "w-[360px] max-w-[calc(100vw-3.5rem)]",
+          // left the last few pixels of the track unreachable on a phone.
+          //
+          // The scrollport is the PANEL, which already sits inside the page
+          // gutter on both sides, less the track's own inset (px-5, sm:px-8).
+          // Measuring from 100vw alone left the card 18px too wide at 390, cut
+          // off flush with the panel's border.
+          "w-[360px] max-w-[calc(100vw-2*var(--spacing-gutter)-2.5rem)] sm:max-w-[calc(100vw-2*var(--spacing-gutter)-4rem)]",
           "bg-peach inset-ring-ink-soft group/card relative flex shrink-0 cursor-pointer flex-col gap-1 rounded-[28px] p-5 inset-ring-1",
         ),
         "transition-[transform,box-shadow] duration-200 ease-out motion-reduce:transition-none",
@@ -138,19 +141,25 @@ function VendorCard({ vendor, priority }: { vendor: Vendor; priority: boolean })
             206:2200 — metadata row. SPACE_BETWEEN, not a fixed gap: Figma
             reports itemSpacing 16 but the alignment overrides it, and the three
             children land 27px apart either side of the bullet.
+
+            Wraps on the narrowest phones (under ~380px there is no room for the
+            price, the dot and the pill on one line); the price never breaks.
           */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-y-2">
             {/* 206:2201 — pill, radius 100, padding 6/10. */}
-            <span className="bg-peach-soft text-ink rounded-[100px] px-2.5 py-1.5 font-sans text-[14px] leading-[16.94px] font-semibold">
+            <span className="bg-peach-soft text-ink rounded-[100px] px-2.5 py-1.5 font-sans text-[14px] leading-[16.94px] font-semibold whitespace-nowrap">
               {vendor.price}
             </span>
             {/* 206:2203 */}
-            <span aria-hidden className="text-slate font-sans text-[14px] leading-[16.94px]">
+            <span
+              aria-hidden
+              className="text-slate font-sans text-[14px] leading-[16.94px] max-[379px]:hidden"
+            >
               •
             </span>
-            {/* 206:2204 — radius 56, padding 4 with a 12 lead-in, gap 20. */}
             {/*
-              206:2204 — radius 56, padding 4 with a 12 lead-in, gap 20.
+              206:2204 — radius 56, padding 4 with a 12 lead-in, gap 20 (8 on a
+              phone, which is what lets the row fit on one line at 390).
 
               DIRECTED: a real link. The design attaches no destination, so it
               points at the vendors listing. `after:absolute after:inset-0`
@@ -161,7 +170,7 @@ function VendorCard({ vendor, priority }: { vendor: Vendor; priority: boolean })
             <Link
               href="/vendors"
               aria-label={`${vendor.cta} ${vendor.name}`}
-              className="bg-brand group-hover/card:bg-brand-strong flex cursor-pointer items-center gap-5 rounded-[56px] py-1 pr-1 pl-3 transition-colors duration-200 ease-out after:absolute after:inset-0 after:rounded-[28px] motion-reduce:transition-none"
+              className="bg-brand group-hover/card:bg-brand-strong canvas:gap-5 flex cursor-pointer items-center gap-2 rounded-[56px] py-1 pr-1 pl-3 transition-colors duration-200 ease-out after:absolute after:inset-0 after:rounded-[28px] motion-reduce:transition-none"
             >
               <span aria-hidden className="font-sans text-[16px] leading-6 font-medium text-white">
                 {vendor.cta}
@@ -181,9 +190,21 @@ function VendorCard({ vendor, priority }: { vendor: Vendor; priority: boolean })
 export function FeaturedVendors() {
   return (
     <section className="bg-cream relative">
-      {/* Clears the phone mockup, which stands 153px above the panel. */}
-      <div className="canvas:px-0 mx-auto max-w-[1280px] px-(--spacing-gutter) pt-[clamp(104px,18.2639vw,263px)]">
-        <div className="bg-peach inset-ring-ink canvas:h-[1522px] canvas:px-0 canvas:pb-0 relative rounded-[clamp(28px,4.7222vw,68px)] px-5 pb-12 inset-ring-1 sm:px-8">
+      {/*
+        Clears the phone mockup, which stands 153px above the panel. The floor
+        is 130, not less: the phones overhang by at least 70 below the canvas,
+        and anything under ~130 left them crowding the hero above.
+      */}
+      <div className="canvas:px-0 mx-auto max-w-[1280px] px-(--spacing-gutter) pt-[clamp(130px,18.2639vw,263px)]">
+        {/*
+          `flow-root` below the canvas is load-bearing. The phones break out of
+          the panel with a NEGATIVE top margin, and the panel has no top border
+          or padding, so without a new block formatting context that margin
+          collapses through it: the whole panel rose instead of the phones, and
+          they sat flush against its top edge at every width below 1440. At the
+          canvas the phones are absolute, so nothing collapses there.
+        */}
+        <div className="bg-peach inset-ring-ink canvas:h-[1522px] canvas:px-0 canvas:pb-0 max-canvas:flow-root relative rounded-[clamp(28px,4.7222vw,68px)] px-5 pb-12 inset-ring-1 sm:px-8">
           {/*
             264:2771 — the three app screens, now as three separate exports so
             they can move independently.
@@ -300,8 +321,8 @@ export function FeaturedVendors() {
               <div className="flex items-start gap-[6%]">
                 {/* 264:2819 / 264:2820 — the strings, then what hangs from them. */}
                 {[
-                  { src: "/images/home/hanging-mascot.svg", w: 140, h: 140, drop: "58%" },
-                  { src: "/images/home/hanging-burger.svg", w: 130, h: 140, drop: "94%" },
+                  { src: "/images/home/hanging-mascot@2x.webp", w: 140, h: 140, drop: "58%" },
+                  { src: "/images/home/hanging-burger@2x.webp", w: 130, h: 140, drop: "94%" },
                 ].map((piece) => (
                   <div key={piece.src} className="flex flex-col items-center">
                     <span
@@ -345,14 +366,14 @@ export function FeaturedVendors() {
             <span className="bg-brand absolute top-[841px] left-[852px] h-[154px] w-2" />
             {/* 264:2822 then 264:2821 — mascot behind, burger in front. */}
             <Image
-              src="/images/home/hanging-mascot.svg"
+              src="/images/home/hanging-mascot@2x.webp"
               alt=""
               width={140}
               height={140}
               className="absolute top-[971px] left-[813px] drop-shadow-[0_4px_12px_rgba(0,0,0,0.55)]"
             />
             <Image
-              src="/images/home/hanging-burger.svg"
+              src="/images/home/hanging-burger@2x.webp"
               alt=""
               width={130}
               height={140}
@@ -376,9 +397,20 @@ export function FeaturedVendors() {
             is the *bounding* box of the rotated node. Unturned it is 597.7x85.4,
             so the element's own origin sits 2.65 right and 27.3 down from the
             box Figma quotes.
+
+            Below the canvas it sits under the eyes, left-aligned, as the board
+            pairs them. `w-fit` rather than `w-full`: the tilt turns about the
+            element's centre, and a full-width box would swing the words around
+            the middle of the panel instead of around themselves.
+
+            The tilt also LIFTS the left end, by ~0.4em for these two words
+            (sin 5.27° x half their width), and the left end is the one under the
+            eyes; hence the top margin in em, so the clearance scales with the
+            type. Under 360px it drops to 27px: at 32 the unbreakable heading is
+            wider than the panel on a 320px phone.
           */}
           <h2
-            className="text-ink canvas:absolute canvas:top-[1081.3px] canvas:left-[35.65px] canvas:mt-0 canvas:w-[603px] relative z-10 mt-4 w-full text-center text-[clamp(32px,5vw,72px)] leading-[1.185] font-bold whitespace-nowrap drop-shadow-[0_4px_4px_#ED5E3B]"
+            className="text-ink canvas:absolute canvas:top-[1081.3px] canvas:left-[35.65px] canvas:mt-0 canvas:w-[603px] canvas:text-center relative z-10 mt-[calc(1rem+0.4em)] w-fit max-w-full text-left text-[clamp(32px,5vw,72px)] leading-[1.185] font-bold whitespace-nowrap drop-shadow-[0_4px_4px_#ED5E3B] max-[359px]:text-[27px]"
             style={{ transform: "rotate(-5.27deg)" }}
           >
             {vendorsPanel.heading}

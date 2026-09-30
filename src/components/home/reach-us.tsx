@@ -68,7 +68,12 @@ function Channel({ channel }: { channel: ReachUsChannel }) {
            * from anchors, so this changes no pixel — it only makes a tap on a
            * phone number do the obvious thing.
            */
-          <a href={channel.href} className={detailType}>
+          /*
+           * py-2.5 / -my-2.5 grows the hit area to 44px without moving a pixel of
+           * layout — the negative margin gives back exactly what the padding
+           * takes — so the 24px line is a full-size touch target.
+           */
+          <a href={channel.href} className={cn(detailType, "-my-2.5 inline-block py-2.5")}>
             {channel.detail}
           </a>
         ) : (
@@ -79,8 +84,20 @@ function Channel({ channel }: { channel: ReachUsChannel }) {
   );
 }
 
+/** Mirrors the action's LIMITS, so the browser stops at the same place. */
+const MAX_LENGTH = { name: 100, email: 254, message: 5000 } as const;
+
 /** 574:2884 / 574:2888 / 574:2892 — label over control, gap 8. */
-function Field({ field, error }: { field: ReachUsField; error?: string }) {
+function Field({
+  field,
+  error,
+  defaultValue,
+}: {
+  field: ReachUsField;
+  error?: string;
+  /** What the visitor typed, restored after a failed send (see ContactFormState.values). */
+  defaultValue?: string;
+}) {
   const id = `reach-us-${field.name}`;
   const errorId = `${id}-error`;
 
@@ -92,7 +109,9 @@ function Field({ field, error }: { field: ReachUsField; error?: string }) {
    */
   const control = cn(
     "bg-cream-soft inset-ring-rule w-full rounded-[12px] p-4 inset-ring-1",
-    "text-ink placeholder:text-grey-mid text-[14px] leading-[21px] tracking-[-0.07px]",
+    // Inter 14/21 at the canvas. 16px below it: iOS Safari zooms the page into
+    // any field set under 16px when it is tapped.
+    "text-ink placeholder:text-grey-mid canvas:text-[14px] canvas:leading-[21px] text-[16px] leading-6 tracking-[-0.07px]",
   );
 
   return (
@@ -112,6 +131,8 @@ function Field({ field, error }: { field: ReachUsField; error?: string }) {
           id={id}
           name={field.name}
           placeholder={field.placeholder}
+          defaultValue={defaultValue}
+          maxLength={MAX_LENGTH[field.name]}
           className={cn(control, "h-[160px] resize-none")}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
@@ -123,6 +144,8 @@ function Field({ field, error }: { field: ReachUsField; error?: string }) {
           type={field.type ?? "text"}
           placeholder={field.placeholder}
           autoComplete={field.autoComplete}
+          defaultValue={defaultValue}
+          maxLength={MAX_LENGTH[field.name]}
           className={cn(control, "h-[64px]")}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
@@ -214,7 +237,12 @@ export function ReachUs() {
           {/* 574:2883 — gap 16. */}
           <div className="flex flex-col gap-4">
             {reachUsFields.map((field) => (
-              <Field key={field.name} field={field} error={state.fieldErrors?.[field.name]} />
+              <Field
+                key={field.name}
+                field={field}
+                error={state.fieldErrors?.[field.name]}
+                defaultValue={state.values?.[field.name]}
+              />
             ))}
           </div>
 

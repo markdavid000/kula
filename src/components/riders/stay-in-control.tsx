@@ -29,7 +29,14 @@ const swooshTops = [335, 359, 383] as const;
 /** 441:6850 / 441:6856 / 441:6862 — a white pill, 623 x 56, radius 80/56/48. */
 function BenefitPill({ text, tone }: { text: string; tone: string }) {
   return (
-    <li className="bg-paper inset-ring-ink flex h-14 items-center gap-3 rounded-full px-6 inset-ring-1">
+    <li
+      /*
+        56 tall as drawn. Below the canvas the pill is too narrow for the copy to
+        stay on one line, so it hugs its lines (min 56) instead of squeezing two
+        or three of them into a fixed 56 at line-height 1.
+      */
+      className="bg-paper inset-ring-ink canvas:h-14 canvas:py-0 flex min-h-14 items-center gap-3 rounded-[28px] px-6 py-3 inset-ring-1"
+    >
       {/* 441:6852 — a 20px Green Mid disc with a 1.5px inside stroke. */}
       <span className="bg-green-mid inset-ring-near-black flex size-5 shrink-0 items-center justify-center rounded-full inset-ring-[1.5px]">
         {/* 441:6853 / 441:6854 — an 11 x 11 frame holding a 1.375px white tick. */}
@@ -44,7 +51,7 @@ function BenefitPill({ text, tone }: { text: string; tone: string }) {
       {/* 441:6855 etc. — Gelica Medium 20/20. */}
       <span
         className={cn(
-          "font-display text-[clamp(16px,1.3889vw,20px)] leading-[1] font-medium",
+          "font-display canvas:leading-[1] text-[clamp(16px,1.3889vw,20px)] leading-[1.25] font-medium",
           tone,
         )}
       >
@@ -128,16 +135,24 @@ export function StayInControl() {
               alt=""
               width={283}
               height={304}
-              className="absolute top-[40.836%] left-[76.641%] h-[27.046%] w-[22.109%] max-w-none scale-x-[-1] drop-shadow-[0_4px_20px_color-mix(in_srgb,var(--color-void)_45%,transparent)]"
+              className="canvas:top-[40.836%] absolute top-[8.5%] left-[76.641%] h-[27.046%] w-[22.109%] max-w-none scale-x-[-1] drop-shadow-[0_4px_20px_color-mix(in_srgb,var(--color-void)_45%,transparent)]"
             />
 
-            {/* 441:6847 "Mystery Item B" — unrotated, and painted over A. */}
+            {/*
+              441:6847 "Mystery Item B" — unrotated, and painted over A.
+
+              Below the canvas both mascots move up beside the eyes. The layer
+              keeps the card's 1280:1124 aspect, so on a narrow card their design
+              height (~36-41% down) is exactly where the two-line headline sits,
+              and they were drawn on top of "control of". The top-right corner is
+              the room the narrow card actually leaves.
+            */}
             <Image
               src="/images/riders/mascot-waving@2x.webp"
               alt=""
               width={251}
               height={251}
-              className="absolute top-[36.299%] left-[64.297%] h-[22.331%] w-[19.609%] max-w-none drop-shadow-[0_4px_12px_color-mix(in_srgb,var(--color-void)_55%,transparent)]"
+              className="canvas:top-[36.299%] absolute top-[4%] left-[64.297%] h-[22.331%] w-[19.609%] max-w-none drop-shadow-[0_4px_12px_color-mix(in_srgb,var(--color-void)_55%,transparent)]"
             />
           </div>
 

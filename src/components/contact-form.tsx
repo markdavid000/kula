@@ -59,6 +59,8 @@ export function ContactForm() {
         name="name"
         placeholder="Tell us your name"
         autoComplete="name"
+        maxLength={100}
+        defaultValue={state.values?.name}
         error={state.fieldErrors?.name}
       />
       <Field
@@ -67,12 +69,16 @@ export function ContactForm() {
         type="email"
         placeholder="Enter your email address"
         autoComplete="email"
+        maxLength={254}
+        defaultValue={state.values?.email}
         error={state.fieldErrors?.email}
       />
       <Field
         label="Message"
         name="message"
         placeholder="Write your message here"
+        maxLength={5000}
+        defaultValue={state.values?.message}
         error={state.fieldErrors?.message}
         multiline
       />
@@ -102,6 +108,9 @@ function Field({
   type?: string;
   placeholder?: string;
   autoComplete?: string;
+  maxLength?: number;
+  /** Restored after a failed send (see ContactFormState.values). */
+  defaultValue?: string;
 }) {
   const errorId = `${name}-error`;
 

@@ -47,3 +47,27 @@ instances and their hover variant lives in the component set, outside the page
 frames, so it could not be fetched. It is generated as a sine-modulated ellipse
 from the supplied reference screenshot. Swap it for the real export when the
 component set becomes reachable.
+
+## App icons and share-card artwork
+
+The site had no icon of its own — `src/app/favicon.ico` was the Next.js
+default. Every icon is now cut from the Kula logo mark (the green chevron
+circle) in the 4096 × 1459 wordmark artwork behind the footer wordmark
+(520:6959), cached as
+`design/FfC9ofVeF8u6tnMm1M57lz/images/23a36f1e43f80108eba9ce9028c243cf7c5f1ab1.png`.
+The mark is ~700px across there, so every size is a downscale.
+
+- `src/app/favicon.ico` (16/32/48), `src/app/icon.png` (512) and
+  `public/icons/app/icon-{192,512}.png` — the circle on transparency.
+- `src/app/apple-icon.png` (180) and `public/icons/app/icon-maskable-512.png` —
+  the chevrons alone on the mark's own green (#1C8042, `--color-green-mid`),
+  full bleed, because iOS fills transparency with black and Android masks the
+  edges. The chevrons are isolated by their whiteness over that green rather
+  than by pasting the circle onto it, which left a visible ring at its
+  antialiased edge.
+
+`assets/og/` holds the share cards' inputs as PNG/woff, because Satori reads
+neither webp nor woff2: the mark, the wordmark, three mascots trimmed from the
+site's own webp exports (`riders/mascot-waving`, `riders/mascot-thumbs-up`,
+`footer/vendor-mascot`), and Bitter 700 and Inter 400/600 from Fontsource
+(SIL Open Font License).

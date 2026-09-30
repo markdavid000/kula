@@ -33,8 +33,17 @@ export const siteConfig = {
   locale: "en_NG",
   country: "NG",
   currency: "NGN",
+  /**
+   * The towns the hero subhead names (264:2618), and the ones structured data
+   * declares as served. The coverage map plots more towns and the Riders FAQ
+   * names fewer — this list follows the hero until the business confirms one.
+   */
+  servedCities: ["Makurdi", "Gboko", "Otukpo"],
   contact: {
     address: "11 Victor Malu Road, New GRA, Makurdi",
+    /** `address`, split into the parts schema.org's PostalAddress wants. */
+    streetAddress: "11 Victor Malu Road, New GRA",
+    locality: "Makurdi",
     region: "Benue State",
     phone: "+234 (0)816 913 4590",
     /** E.164, for tel: links. */
@@ -84,16 +93,20 @@ export const legalNav: readonly NavItem[] = [
 /**
  * Off-site destinations for the store badges and social icons.
  *
- * NOT FROM FIGMA. The design draws these as flat artwork with no link attached,
- * so every URL here is authored. The handles are inferred from the contact
- * address (thekulaapp.info@gmail.com) and the store links are placeholders
- * until the apps are published — CONFIRM ALL FIVE before launch. They are
- * collected here so that is a one-file change.
+ * NOT FROM FIGMA. The design draws these as flat artwork with no link attached.
+ *
+ * The three social profiles are CONFIRMED by the Kula team (note the TikTok
+ * handle is `thekulaapp.ng`), and are also published as `sameAs` in the
+ * structured data. The two store links are still PLACEHOLDERS until the apps
+ * are published — confirm them before launch.
  */
 export const externalLinks = {
   appStore: "https://apps.apple.com/app/kula",
   googlePlay: "https://play.google.com/store/apps/details?id=com.kula",
   x: "https://x.com/thekulaapp",
-  instagram: "https://instagram.com/thekulaapp",
-  tiktok: "https://tiktok.com/@thekulaapp",
+  instagram: "https://www.instagram.com/thekulaapp",
+  tiktok: "https://www.tiktok.com/@thekulaapp.ng",
 } as const;
+
+/** The confirmed profiles — the ones safe to assert as this business's own. */
+export const socialProfiles = [externalLinks.x, externalLinks.instagram, externalLinks.tiktok];

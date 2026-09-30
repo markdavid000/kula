@@ -68,8 +68,13 @@ function StepCard({ step }: { step: Step }) {
         />
       </div>
 
-      {/* 224:2984 — inset 20 from the card, gap 12. */}
-      <div className="flex flex-col gap-3 px-5 pt-4">
+      {/*
+        224:2984 — inset 20 from the card, gap 12. At the canvas the card's fixed
+        434 height leaves room under the text; below it the card hugs its
+        content, so the bottom inset has to be explicit or the copy sits on the
+        border.
+      */}
+      <div className="canvas:pb-0 flex flex-col gap-3 px-5 pt-4 pb-6">
         {/* Gelica Black 24/28.44. */}
         <h3 className="text-near-black text-[clamp(18px,1.6667vw,24px)] leading-[1.185] font-extrabold">
           {step.title}
@@ -93,7 +98,10 @@ export function ThreeSteps() {
        */
       id="how-it-works"
       aria-labelledby="three-steps-heading"
-      className="canvas:h-[1328px] relative -mt-1"
+      // Below the canvas, room between the meal strip and the arch: the design's 185
+      // there is lost once the layout stacks, which left the steps' eyes 34-60px
+      // under the dishes. At the canvas the -1 seam overlap is as drawn.
+      className="canvas:h-[1328px] canvas:-mt-1 relative mt-[clamp(40px,8vw,115px)]"
     >
       {/* 224:2978 — the dome. */}
       <div
@@ -115,7 +123,14 @@ export function ThreeSteps() {
         carries no padding at the canvas and starts at the section's top edge,
         so the design's absolute offsets still resolve exactly where they did.
       */}
-      <div className="canvas:px-0 canvas:pb-0 relative px-(--spacing-gutter) pb-16">
+      {/*
+        Below the canvas the eyes are the first thing in the flow, so without top
+        padding they sat at the dome's very top edge, where the dome has no
+        width yet and their corners hung out over the cream. The padding drops
+        them to where the dome is wide enough to hold them, with room to spare,
+        and it grows with the dome. At the canvas everything here is absolute.
+      */}
+      <div className="canvas:px-0 canvas:pt-0 canvas:pb-0 relative px-(--spacing-gutter) pt-[clamp(32px,6vw,72px)] pb-16">
         {/*
         224:2979 — sized to its render bounds (325.95 x 214.68), which run 13px
         past the node box because the eye outlines overhang it.
@@ -148,12 +163,20 @@ export function ThreeSteps() {
 
         {/*
         224:3001 — Gelica Bold 88/104.28, centred, over a hard Orange shadow.
+
+        Below the canvas the measure is clamp(320px, 72vw, 868px), not 868. The
+        dome narrows towards its top, and at tablet widths an 868 measure let the
+        heading set on one line wider than the dome at that height, so its ends
+        ran out onto the cream. 72vw keeps it to two lines that sit inside the
+        curve; 320 keeps a phone at its current two lines. The lines are balanced
+        below the canvas so the second is never a lone "steps"; at the canvas
+        the design's own break holds (see the note on text-wrap in globals.css).
         Two lines at the canvas width, which is why the box is 208 tall. `z-20`
         keeps it over the arrow, which is the design's own paint order.
       */}
         <h2
           id="three-steps-heading"
-          className="text-ink canvas:absolute canvas:top-[490px] canvas:left-1/2 canvas:mt-0 canvas:w-[868px] canvas:max-w-none canvas:-translate-x-1/2 relative z-20 mx-auto mt-6 w-full max-w-[868px] text-center text-[clamp(34px,6.1111vw,88px)] leading-[1.185] font-bold drop-shadow-[0_4px_4px_#EA5220]"
+          className="text-ink canvas:absolute canvas:top-[490px] canvas:left-1/2 canvas:mt-0 canvas:w-[868px] canvas:max-w-none canvas:-translate-x-1/2 max-canvas:text-balance relative z-20 mx-auto mt-6 w-full max-w-[clamp(320px,72vw,868px)] text-center text-[clamp(34px,6.1111vw,88px)] leading-[1.185] font-bold drop-shadow-[0_4px_4px_#EA5220]"
         >
           {steps.heading}
         </h2>

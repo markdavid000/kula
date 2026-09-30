@@ -1,17 +1,24 @@
+import { JsonLd } from "@/components/json-ld";
 import { KulaFooter } from "@/components/layout/kula-footer";
 import { RidersFaq } from "@/components/riders/faq-section";
 import { RidersHero } from "@/components/riders/hero";
 import { StartEarning } from "@/components/riders/start-earning";
 import { StayInControl } from "@/components/riders/stay-in-control";
 import { WeTakeCare } from "@/components/riders/we-take-care";
-import { ridersHero } from "@/content/riders-page";
-import { createMetadata } from "@/lib/seo";
+import { ridersFaq, ridersHero } from "@/content/riders-page";
+import { breadcrumbJsonLd, createMetadata, faqPageJsonLd } from "@/lib/seo";
 
 export const metadata = createMetadata({
   title: "Riders",
   description: ridersHero.subtitle,
   path: "/riders",
 });
+
+const faqJsonLd = faqPageJsonLd(ridersFaq.items);
+const breadcrumbs = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: "Riders", path: "/riders" },
+]);
 
 /**
  * Riders — Figma node 441:6478 (1440 x 6178).
@@ -47,6 +54,9 @@ export default function RidersPage() {
 
       {/* 441:6680 — the footer OVERLAPS the FAQ by 13px (441:6606 ends 4999, strip 4986). */}
       <KulaFooter topGap={-13} />
+
+      <JsonLd data={breadcrumbs} />
+      {faqJsonLd ? <JsonLd data={faqJsonLd} /> : null}
     </>
   );
 }

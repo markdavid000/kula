@@ -14,8 +14,11 @@ export const metadata = createMetadata({
 export default function ContactPage() {
   return (
     <>
-      <Container className="py-20">
-        <h1 className="max-w-3xl text-6xl">Need to Reach us?</h1>
+      {/* Clears the fixed header — see PageHeader. */}
+      <Container className="pt-[calc(clamp(76px,8.1944vw,118px)+2.5rem)] pb-20">
+        <h1 className="max-w-3xl text-[clamp(36px,4.1667vw,60px)] leading-[1.1]">
+          Need to Reach us?
+        </h1>
 
         <div className="mt-12">
           <ContactDetails>

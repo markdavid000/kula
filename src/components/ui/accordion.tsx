@@ -111,7 +111,12 @@ export function Accordion({
                 aria-expanded={open}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(open ? null : index)}
-                className="flex w-full cursor-pointer items-center justify-between gap-4 text-left"
+                /*
+                  The ::after extends the hit area 8px above and below. The row's
+                  own padding is not part of the button, so a 28px step header
+                  was a 28px target; this makes it 44 without moving any layout.
+                */
+                className="relative flex w-full cursor-pointer items-center justify-between gap-4 text-left after:absolute after:inset-x-0 after:-inset-y-2 after:content-['']"
               >
                 <span
                   className={cn(

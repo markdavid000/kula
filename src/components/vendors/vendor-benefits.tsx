@@ -48,44 +48,56 @@ interface Art {
 
 /** 520:1388 — the only artboard the design paints *under* the headline. */
 const noFeesArtUnder: readonly Art[] = [
-  { src: "/images/vendors/no-fees-art-17.svg", left: 675, top: 246, w: 239.6303, h: 197.0367 },
+  { src: "/images/vendors/no-fees-art-17@2x.webp", left: 675, top: 246, w: 239.6303, h: 197.0367 },
 ];
 
 /** 520:1900, 520:2239, 520:2307 — painted over the headline, in this order. */
 const noFeesArtOver: readonly Art[] = [
-  { src: "/images/vendors/no-fees-art-7.svg", left: 420.0001, top: 234, w: 304.7122, h: 265.8229 },
   {
-    src: "/images/vendors/no-fees-art-20.svg",
+    src: "/images/vendors/no-fees-art-7@2x.webp",
+    left: 420.0001,
+    top: 234,
+    w: 304.7122,
+    h: 265.8229,
+  },
+  {
+    src: "/images/vendors/no-fees-art-20@2x.webp",
     left: 163.3344,
     top: 188.418,
     w: 363.4443,
     h: 339.2327,
   },
-  { src: "/images/vendors/no-fees-art-16.svg", left: -14, top: 211, w: 300.4667, h: 254.1339 },
+  { src: "/images/vendors/no-fees-art-16@2x.webp", left: -14, top: 211, w: 300.4667, h: 254.1339 },
 ];
 
 /** 520:2514 → 520:6014, in the design's own paint order. */
 const unlimitedArt: readonly Art[] = [
-  { src: "/images/vendors/unlimited-art-15.svg", left: 304, top: 255, w: 331.8401, h: 221.2267 },
   {
-    src: "/images/vendors/unlimited-art-13.svg",
+    src: "/images/vendors/unlimited-art-15@2x.webp",
+    left: 304,
+    top: 255,
+    w: 331.8401,
+    h: 221.2267,
+  },
+  {
+    src: "/images/vendors/unlimited-art-13@2x.webp",
     left: 107.265,
     top: 345.4387,
     w: 187.7163,
     h: 134.785,
   },
-  { src: "/images/vendors/unlimited-art-5.svg", left: -19, top: 223, w: 189.0437, h: 163.7636 },
-  { src: "/images/vendors/unlimited-art-14.svg", left: 547, top: 206, w: 161, h: 108 },
-  { src: "/images/vendors/unlimited-art-19.svg", left: 790, top: 357, w: 149, h: 100 },
-  { src: "/images/vendors/unlimited-art-12.svg", left: 753, top: 171, w: 185, h: 124 },
+  { src: "/images/vendors/unlimited-art-5@2x.webp", left: -19, top: 223, w: 189.0437, h: 163.7636 },
+  { src: "/images/vendors/unlimited-art-14@2x.webp", left: 547, top: 206, w: 161, h: 108 },
+  { src: "/images/vendors/unlimited-art-19@2x.webp", left: 790, top: 357, w: 149, h: 100 },
+  { src: "/images/vendors/unlimited-art-12@2x.webp", left: 753, top: 171, w: 185, h: 124 },
   {
-    src: "/images/vendors/unlimited-art-2.svg",
+    src: "/images/vendors/unlimited-art-2@2x.webp",
     left: 128.0001,
     top: 174,
     w: 188.3789,
     h: 179.3282,
   },
-  { src: "/images/vendors/unlimited-art-3.svg", left: 583, top: 358, w: 156, h: 104 },
+  { src: "/images/vendors/unlimited-art-3@2x.webp", left: 583, top: 358, w: 156, h: 104 },
 ];
 
 /**
@@ -205,14 +217,28 @@ function Headline({
   );
 }
 
+/**
+ * Below the canvas, a doodle panel is its copy plus a band for the doodles.
+ *
+ * The art layer is anchored to the panel's bottom at 940:480, and its pieces
+ * only start ~36% of the way down it (y 171 of 480), so the painted band is the
+ * bottom 64% of a box 51% as tall as the panel is wide: ~33% of the width.
+ * Reserving that as bottom padding — a percentage, so it tracks the width
+ * exactly as the art does — puts the doodles directly under the headline. A
+ * fixed min-height instead left a gap that grew and shrank with the viewport.
+ */
+const doodlePanel = "min-h-0 pb-[34%]";
+
 /** The panel shell: surface, radius, inside stroke and the doodle bitmap. */
 function Panel({
   surface,
   patternOpacity,
+  className,
   children,
 }: {
   surface: string;
   patternOpacity: number;
+  className?: string;
   children: ReactNode;
 }) {
   return (
@@ -223,6 +249,7 @@ function Panel({
         "flex flex-col items-center overflow-hidden rounded-[clamp(28px,3.8889vw,56px)] inset-ring-2",
         "canvas:h-[480px] canvas:w-[940px] canvas:rounded-[56px] canvas:px-0 canvas:py-0",
         surface,
+        className,
       )}
     >
       {/* 520:1387 / 520:2500 / 520:2510 — 942 square at x -1, y -462. */}
@@ -243,7 +270,14 @@ function Panel({
 /** 520:2505 … 520:2508 — the shared `card` component, 360 x 259. */
 function VendorCard({ card }: { card: VendorCardItem }) {
   return (
-    <li className="bg-peach inset-ring-ink-soft flex w-[360px] max-w-[calc(100vw-5rem)] shrink-0 flex-col gap-1 rounded-[28px] p-5 inset-ring-1">
+    <li
+      /*
+        360 as drawn, capped at the scrollport: the panel's width (the viewport
+        less the page gutter each side) less its own px-5 / sm:px-8. A 100vw-5rem
+        cap left the card wider than the panel on a phone, cut flush at its edge.
+      */
+      className="bg-peach inset-ring-ink-soft flex w-[360px] max-w-[calc(100vw-2*var(--spacing-gutter)-2.5rem)] shrink-0 flex-col gap-1 rounded-[28px] p-5 inset-ring-1 sm:max-w-[calc(100vw-2*var(--spacing-gutter)-4rem)]"
+    >
       {/* 206:2196 — inner column, gap 24. */}
       <div className="flex flex-col gap-6">
         {/* 206:2197 — 320 x 122, radius 16, 1px Primary Green inside stroke. */}
@@ -259,17 +293,24 @@ function VendorCard({ card }: { card: VendorCardItem }) {
           </h3>
 
           {/* 206:2200 — SPACE_BETWEEN, cross-axis centred. */}
-          <div className="flex items-center justify-between">
+          {/*
+            Wraps on the narrowest phones (under ~380px there is no room for the
+            price, the dot and the pill on one line); the price never breaks.
+          */}
+          <div className="flex flex-wrap items-center justify-between gap-y-2">
             {/* 206:2201 — radius 100, padding 6/10. */}
-            <span className="bg-peach-soft text-ink rounded-[100px] px-2.5 py-1.5 font-sans text-[14px] leading-[16.94px] font-semibold">
+            <span className="bg-peach-soft text-ink rounded-[100px] px-2.5 py-1.5 font-sans text-[14px] leading-[16.94px] font-semibold whitespace-nowrap">
               {card.price}
             </span>
             {/* 206:2203 */}
-            <span aria-hidden className="text-slate font-sans text-[14px] leading-[16.94px]">
+            <span
+              aria-hidden
+              className="text-slate font-sans text-[14px] leading-[16.94px] max-[379px]:hidden"
+            >
               •
             </span>
-            {/* 206:2204 — radius 56, padding 4 with a 12 lead-in, gap 20. */}
-            <span className="bg-brand flex items-center gap-5 rounded-[56px] py-1 pr-1 pl-3">
+            {/* 206:2204 — radius 56, padding 4 with a 12 lead-in, gap 20 (8 on a phone, so the row fits at 390). */}
+            <span className="bg-brand canvas:gap-5 flex items-center gap-2 rounded-[56px] py-1 pr-1 pl-3">
               <span className="font-sans text-[16px] leading-6 font-medium text-white capitalize">
                 {card.cta}
               </span>
@@ -315,7 +356,7 @@ export function VendorBenefits() {
         className="canvas:items-start canvas:px-0 canvas:pl-[264px] mx-auto -mt-[clamp(48px,9.7917vw,141px)] flex w-full max-w-(--width-canvas) flex-col items-center gap-10 px-(--spacing-gutter)"
       >
         {/* 520:1386 — Accent Yellow, pattern at 6%. */}
-        <Panel surface="bg-accent" patternOpacity={0.06}>
+        <Panel surface="bg-accent" patternOpacity={0.06} className={doodlePanel}>
           <ArtLayer pieces={noFeesArtUnder} />
           <Badge
             width={76}
@@ -326,7 +367,7 @@ export function VendorBenefits() {
           </Badge>
           {/* Shadow: --color-brand-shadow, not --color-brand. */}
           <Headline
-            className="text-ink top-[131px]"
+            className="text-ink canvas:top-[131px]"
             shadow="drop-shadow-[0_4px_4px_var(--color-brand-shadow)]"
           >
             {noFees.headline}
@@ -344,7 +385,7 @@ export function VendorBenefits() {
             {goLive.badge}
           </Badge>
           <Headline
-            className="text-paper top-[107px]"
+            className="text-paper canvas:top-[107px]"
             shadow="drop-shadow-[0_4px_4px_var(--color-ink)]"
           >
             {goLive.headline}
@@ -380,7 +421,7 @@ export function VendorBenefits() {
         </Panel>
 
         {/* 520:2509 — --color-tangerine-soft, pattern at 7%. */}
-        <Panel surface="bg-tangerine-soft" patternOpacity={0.07}>
+        <Panel surface="bg-tangerine-soft" patternOpacity={0.07} className={doodlePanel}>
           <Badge
             width={151}
             surface="bg-accent shadow-[0_2px_0_0_var(--color-accent)]"
@@ -389,7 +430,7 @@ export function VendorBenefits() {
             {unlimited.badge}
           </Badge>
           <Headline
-            className="text-ink top-[107px]"
+            className="text-ink canvas:top-[107px]"
             shadow="drop-shadow-[0_4px_4px_var(--color-brand-shadow)]"
           >
             {unlimited.headline}
